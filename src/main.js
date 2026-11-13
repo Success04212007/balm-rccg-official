@@ -104,14 +104,126 @@ function footer() {
 
 function homePage() {
   return `
-  <section class="hero"><div class="hero-image" role="img" aria-label="Illustrative photograph of a worship gathering"></div><div class="hero-shade"></div><div class="container hero-content"><div class="hero-copy"><span class="eyebrow light"><span class="eyebrow-line"></span> BALM OF GILEAD · RCCG AREA CHURCH</span><h1>Experience His presence.<br><em>Live a transformed life.</em></h1><p>Welcome to a community where faith is nurtured, hope is renewed and the love of Jesus is shared. There is room for you here.</p><div class="hero-actions">${button('Plan your visit','/visit','btn btn-cream')}${button('Explore our church','/about','btn btn-outline-light')}</div><span class="image-note">Illustrative worship photography · Replace with an approved church photograph</span></div><div class="hero-side-note"><span>01 / A PLACE TO BELONG</span><span class="side-rule"></span><span>WORSHIP · WORD · FELLOWSHIP</span></div></div><a class="scroll-cue" href="#welcome" aria-label="Scroll to welcome section">SCROLL TO DISCOVER <span>↓</span></a></section>
-  <section class="welcome section-pad" id="welcome"><div class="container welcome-grid"><div class="welcome-image-wrap"><img src="${A.worshipImage}" alt="People gathered together in community" loading="lazy"><span class="image-caption">FAITH · FELLOWSHIP · COMMUNITY</span></div><div class="welcome-copy"><span class="eyebrow">YOU ARE WELCOME HERE</span><h2>A place to encounter God and grow together.</h2><p class="lead">At Balm of Gilead, we believe the church is more than a place to attend. It is a family in which people are welcomed, encouraged and equipped to follow Jesus.</p><p>Through worship, the teaching of Scripture, prayer, discipleship and service, we seek to create an environment where every generation can take meaningful steps in faith.</p>${link('Discover our story','/about')}</div></div></section>
-  <section class="service-strip"><div class="container service-strip-inner"><div><span class="eyebrow light">WORSHIP WITH US</span><h2>There is a seat for you.</h2><p>Our current timetable is being confirmed. Please contact the church office before travelling.</p></div><div class="service-strip-detail"><span class="service-day">SUNDAY</span><strong>Celebration Service</strong><small>Time & venue to be confirmed</small></div><div class="service-strip-link">${link('View all services','/services')}</div></div></section>
-  <section class="section-pad"><div class="container"><div class="section-heading-row">${sectionIntro('GROW IN FAITH','A community with purpose','Discover ways to worship, learn, serve and build meaningful relationships.')}${link('Explore all ministries','/ministries')}</div><div class="feature-grid">${featureCard('book','Biblical teaching','Grow in the knowledge of Scripture and put faith into practice.','/services')}${featureCard('heart','Prayer & care','Find encouragement, prayer and pastoral support in every season.','/prayer')}${featureCard('users','Life together','Connect with others through fellowship, service and shared purpose.','/ministries')}</div></div></section>
-  <section class="story-band"><div class="story-image"></div><div class="story-copy"><span class="eyebrow light">OUR HEART</span><h2>Faith that reaches beyond Sunday.</h2><p>We are committed to sharing the Gospel, nurturing disciples and expressing the love of Christ through practical care and service.</p>${button('Learn about our values','/about','btn btn-outline-light')}</div></section>
-  <section class="section-pad soft-bg"><div class="container"><div class="section-heading-row">${sectionIntro('WHAT’S HAPPENING','Gather, grow and take part','Church events and programmes will appear here as dates and details are approved.')}${link('View events','/events')}</div><div id="homeEvents" class="content-grid three-col">${placeholder('Upcoming programmes','Confirmed event information will be published here.')}</div></div></section>
-  <section class="section-pad"><div class="container media-feature"><div><span class="eyebrow">WATCH · LISTEN · GROW</span><h2>Messages to strengthen your walk with God.</h2><p>Explore biblical teaching and worship resources from Balm of Gilead as approved sermons and recordings become available.</p>${button('Explore sermons & media','/sermons','btn btn-dark')}</div><div class="media-feature-visual"><div class="media-mark">${icon('book')}</div><span>SERMONS & MEDIA</span><small>Approved recordings will be shared here</small></div></div></section>
-  <section class="section-pad testimonies-band"><div class="container testimonies-inner"><div><span class="eyebrow light">STORIES OF FAITH</span><h2>Every story matters.<br>Every testimony is precious.</h2><p>Approved testimonies will be shared with the contributor’s consent and care for their privacy.</p>${button('Visit testimonies','/testimonies','btn btn-cream')}</div><div class="quote-mark">“</div></div></section>`;
+  <section class="home-hero">
+    <div class="home-hero-photo" role="img" aria-label="Illustrative photograph of a church worship gathering"></div>
+    <div class="home-hero-overlay"></div>
+    <div class="container home-hero-inner">
+      <div class="home-hero-copy">
+        <span class="hero-kicker"><i></i> THE REDEEMED CHRISTIAN CHURCH OF GOD · AREA CHURCH</span>
+        <h1>A place to belong.<br><em>A faith that transforms.</em></h1>
+        <p>Come as you are. Discover a church family where the Word is alive, worship is heartfelt, prayer is powerful and every generation has room to grow.</p>
+        <div class="home-hero-actions">${button('Plan your first visit','/visit','btn btn-gold')}${button('Discover our church','/about','btn btn-ghost-light')}</div>
+        <div class="hero-trust-line"><span>CHRIST-CENTRED</span><b>·</b><span>BIBLE-ROOTED</span><b>·</b><span>COMMUNITY-FOCUSED</span></div>
+      </div>
+      <aside class="hero-welcome-card">
+        <span class="welcome-card-icon">${icon('heart')}</span>
+        <span class="eyebrow">YOU ARE WELCOME HERE</span>
+        <strong>Come and experience the love of Christ.</strong>
+        <a href="/visit" data-link>We would love to meet you <span>↗</span></a>
+      </aside>
+    </div>
+    <a class="hero-scroll" href="#welcome" aria-label="Scroll to discover"><span></span> SCROLL TO DISCOVER</a>
+  </section>
+
+  <section class="home-welcome section-pad" id="welcome">
+    <div class="container home-welcome-grid">
+      <div class="welcome-photo-stack">
+        <img class="welcome-photo-main" src="${A.worshipImage}" alt="Illustrative image of people connecting in community" loading="lazy">
+        <div class="welcome-photo-note"><span>ONE CHURCH FAMILY</span><strong>Growing in faith.<br>Living in love.</strong></div>
+        <span class="welcome-photo-index">01 — A PLACE TO GROW</span>
+      </div>
+      <div class="home-welcome-copy">
+        <span class="eyebrow"><i class="eyebrow-line"></i> WELCOME TO BALM OF GILEAD</span>
+        <h2>More than a service.<br><em>A family in Christ.</em></h2>
+        <p class="welcome-lead">We believe church is a place to encounter God, discover purpose and walk through life with people who care.</p>
+        <p>At Balm of Gilead, we are committed to worship, biblical teaching, prayer, discipleship and practical service. Wherever you are on your journey of faith, we want to help you take your next step with Jesus.</p>
+        <div class="welcome-signoff"><span class="signoff-rule"></span><span>FAITH · HOPE · RESTORATION</span></div>
+        ${link('Get to know us','/about')}
+      </div>
+    </div>
+  </section>
+
+  <section class="home-service-section">
+    <div class="container home-service-panel">
+      <div class="service-panel-intro">
+        <span class="eyebrow light">MAKE ROOM FOR WORSHIP</span>
+        <h2>Let’s worship<br><em>together.</em></h2>
+        <p>We look forward to welcoming you. Check the confirmed service schedule before making your journey.</p>
+        ${button('See service information','/services','btn btn-gold')}
+      </div>
+      <div class="service-panel-details">
+        <div class="service-panel-top"><span>OUR WEEKLY GATHERING</span><span class="service-live-dot"></span></div>
+        <div class="service-panel-day">SUN</div>
+        <h3>Sunday Celebration Service</h3>
+        <p>A time of worship, the Word, prayer and fellowship.</p>
+        <div class="service-panel-meta"><span>TIME</span><strong>To be confirmed</strong></div>
+        <div class="service-panel-meta"><span>LOCATION</span><strong>Church address to be confirmed</strong></div>
+        <small class="service-confirm-note">Please contact the church office for the latest confirmed details.</small>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-ministries section-pad">
+    <div class="container">
+      <div class="home-section-heading">
+        <div>${sectionIntro('FIND YOUR PLACE','There is a place for you here.','Faith is strengthened when we grow together. Discover a community where every generation can connect, serve and flourish.')}</div>
+        ${link('Explore all ministries','/ministries')}
+      </div>
+      <div class="home-ministry-grid">
+        <a class="home-ministry-card ministry-youth" href="/ministries/youth" data-link><img src="https://images.unsplash.com/photo-1529390079861-591de354faf5?auto=format&fit=crop&w=900&q=85" alt="Young people gathered together" loading="lazy"><span class="ministry-card-shade"></span><span class="ministry-card-number">01 / GENERATIONS</span><span class="ministry-card-copy"><small>GROWING TOGETHER</small><strong>Youth & Teens</strong><i>Discover the ministry <b>↗</b></i></span></a>
+        <a class="home-ministry-card ministry-women" href="/ministries/women" data-link><img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=900&q=85" alt="Women and friends sharing community" loading="lazy"><span class="ministry-card-shade"></span><span class="ministry-card-number">02 / FELLOWSHIP</span><span class="ministry-card-copy"><small>FAITH & FRIENDSHIP</small><strong>Women’s Fellowship</strong><i>Discover the ministry <b>↗</b></i></span></a>
+        <a class="home-ministry-card ministry-worship" href="/ministries/choir" data-link><img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=85" alt="A vocalist performing on stage" loading="lazy"><span class="ministry-card-shade"></span><span class="ministry-card-number">03 / WORSHIP</span><span class="ministry-card-copy"><small>WORSHIP WITH PURPOSE</small><strong>Choir & Music</strong><i>Discover the ministry <b>↗</b></i></span></a>
+        <a class="home-ministry-card ministry-care" href="/ministries/house-fellowship" data-link><img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=900&q=85" alt="Friends gathered in fellowship" loading="lazy"><span class="ministry-card-shade"></span><span class="ministry-card-number">04 / COMMUNITY</span><span class="ministry-card-copy"><small>LIFE IN COMMUNITY</small><strong>House Fellowship</strong><i>Discover the ministry <b>↗</b></i></span></a>
+      </div>
+      <p class="home-image-disclaimer">Photography is illustrative and will be replaced with approved Balm of Gilead ministry photographs.</p>
+    </div>
+  </section>
+
+  <section class="home-purpose-band">
+    <div class="purpose-band-image"></div><div class="purpose-band-shade"></div>
+    <div class="container purpose-band-content">
+      <span class="eyebrow light">OUR HEART BEYOND THE BUILDING</span>
+      <h2>Worship that moves us.<br><em>Love that moves us to serve.</em></h2>
+      <p>We want the hope we find in Jesus to be seen in how we care, encourage, serve and share the Gospel with the world around us.</p>
+      ${button('Explore our mission','/about','btn btn-ghost-light')}
+    </div>
+  </section>
+
+  <section class="home-next-steps section-pad">
+    <div class="container">
+      <div class="home-section-heading"><div>${sectionIntro('TAKE YOUR NEXT STEP','Faith is a journey. You don’t have to walk it alone.','Whether you are new to church or have been part of a church family for years, there is a next step waiting for you.')}</div></div>
+      <div class="next-step-grid">
+        <article class="next-step-card"><span class="next-step-no">01</span><span class="next-step-icon">${icon('users')}</span><h3>Plan a visit</h3><p>Thinking of joining us for a service? Let us help you feel at home from the moment you arrive.</p>${link('Plan your visit','/visit')}</article>
+        <article class="next-step-card"><span class="next-step-no">02</span><span class="next-step-icon">${icon('heart')}</span><h3>Request prayer</h3><p>Whatever you are facing, you can share a prayer request with our authorised pastoral team.</p>${link('Let us pray with you','/prayer')}</article>
+        <article class="next-step-card"><span class="next-step-no">03</span><span class="next-step-icon">${icon('book')}</span><h3>Grow in the Word</h3><p>Explore biblical messages and teaching resources to encourage your walk with Christ.</p>${link('Explore messages','/sermons')}</article>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-events-section section-pad">
+    <div class="container">
+      <div class="home-section-heading">
+        <div>${sectionIntro('LIFE AT BALM OF GILEAD','Gather. Celebrate. Grow.','Stay connected with church events, special programmes and opportunities to come together.')}</div>
+        ${link('View all events','/events')}
+      </div>
+      <div id="homeEvents" class="content-grid three-col home-events-grid">${placeholder('Upcoming events','Approved event details will be published here as they are confirmed.')}</div>
+    </div>
+  </section>
+
+  <section class="home-word-section">
+    <div class="container home-word-grid">
+      <div class="home-word-art"><span class="word-art-overline">THE WORD OF GOD</span><div class="word-art-quote">“</div><span class="word-art-reference">FAITH · TRUTH · LIFE</span></div>
+      <div class="home-word-copy"><span class="eyebrow">LISTEN & BE ENCOURAGED</span><h2>Let the Word strengthen your walk.</h2><p>Make space for biblical teaching, encouragement and worship. Approved messages from Balm of Gilead will be available in our media library.</p>${button('Visit sermons & media','/sermons','btn btn-dark')}</div>
+    </div>
+  </section>
+
+  <section class="home-testimony-section">
+    <div class="container home-testimony-inner"><div><span class="eyebrow light">GOD IS STILL AT WORK</span><h2>Every testimony tells<br>of His faithfulness.</h2><p>We celebrate what God is doing in people’s lives. Stories will only be shared with the contributor’s permission and church approval.</p>${button('Read testimonies','/testimonies','btn btn-gold')}</div><div class="testimony-symbol">“</div></div>
+  </section>
+
+  <section class="home-final-cta section-pad">
+    <div class="container final-cta-panel"><div><span class="eyebrow light">YOUR PLACE IS HERE</span><h2>We can’t wait<br>to welcome you.</h2><p>Come worship with us, meet the church family and take your next step in faith.</p></div><div class="final-cta-actions">${button('Plan your visit','/visit','btn btn-gold')}${button('Get in touch','/contact','btn btn-ghost-light')}</div><span class="final-cta-cross">✳</span></div>
+  </section>`;
 }
 
 function aboutPage() {
