@@ -6,3 +6,169 @@
 
 /* Official Balm of Gilead logo asset */
 .brand-mark.brand-logo{overflow:hidden;background:transparent;border:0;box-shadow:none;padding:0;display:grid;place-items:center}.brand-mark.brand-logo img{display:block;width:100%;height:100%;object-fit:contain}.brand-light .brand-mark.brand-logo img{filter:none}
+
+
+/* =========================================================
+   BALM OF GILEAD — PREMIUM CHURCH HOMEPAGE EXPERIENCE
+   ========================================================= */
+:root{--gold:#c7a66b;--gold-light:#e1c995;--forest:#12392f;--forest-deep:#0b261f;--paper:#fbfaf6;--ink:#202a24}
+.site-header{position:sticky;top:0;z-index:80;background:rgba(251,250,246,.96);backdrop-filter:blur(16px);box-shadow:0 8px 30px rgba(15,40,30,.045)}
+.announcement{background:#0d2b23}
+.brand-mark.brand-logo{width:48px;height:48px}
+.brand-copy strong{letter-spacing:.14em}
+.desktop-nav a,.nav-more-button{transition:color .2s ease}
+.desktop-nav a:hover,.nav-more-button:hover{color:#a8864c}
+.header-visit{background:var(--forest);border:1px solid var(--forest);transition:background .2s,transform .2s}
+.header-visit:hover{background:#1c5141;transform:translateY(-1px)}
+.home-hero{position:relative;min-height:720px;height:min(790px,calc(100vh - 28px));background:#0d2a22;color:#fff;overflow:hidden;isolation:isolate}
+.home-hero-photo{position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1507692049790-de58290a4334?auto=format&fit=crop&w=2400&q=90');background-size:cover;background-position:center 42%;z-index:-2;transform:scale(1.015)}
+.home-hero-overlay{position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(5,22,17,.88) 0%,rgba(7,28,21,.72) 44%,rgba(8,29,23,.26) 100%),linear-gradient(0deg,rgba(5,20,16,.55),transparent 42%)}
+.home-hero-inner{height:100%;display:flex;align-items:center;justify-content:space-between;gap:40px;padding-top:40px;padding-bottom:80px;position:relative}
+.home-hero-copy{max-width:760px;padding-top:10px}
+.hero-kicker{display:flex;align-items:center;gap:12px;color:#e6d8b8;font-size:9px;letter-spacing:.2em;font-weight:700}
+.hero-kicker i,.eyebrow-line{width:34px;height:1px;background:var(--gold);display:inline-block}
+.home-hero h1{font:500 clamp(54px,7vw,91px)/1.06 var(--serif);letter-spacing:-.045em;margin:28px 0 24px;max-width:850px}
+.home-hero h1 em,.home-welcome-copy h2 em,.service-panel-intro h2 em,.purpose-band-content h2 em{font-weight:400;color:#dfc48e}
+.home-hero-copy>p{max-width:560px;color:#e0e6df;font-size:15px;line-height:1.9;margin-bottom:30px}
+.home-hero-actions{display:flex;gap:13px;flex-wrap:wrap}
+.btn-gold{background:var(--gold);color:#142e25;border:1px solid var(--gold)}
+.btn-gold:hover{background:#dfc38d;border-color:#dfc38d;color:#102b22}
+.btn-ghost-light{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.58)}
+.btn-ghost-light:hover{background:#fff;color:var(--forest)}
+.hero-trust-line{display:flex;align-items:center;gap:12px;margin-top:42px;color:#d5dcd5;font-size:8px;letter-spacing:.17em;font-weight:700}
+.hero-trust-line b{color:var(--gold);font-size:13px}
+.hero-welcome-card{width:250px;flex:none;align-self:flex-end;margin-bottom:22px;padding:25px 24px;background:rgba(249,247,239,.96);color:var(--forest);box-shadow:0 25px 65px rgba(0,0,0,.2);border-top:3px solid var(--gold)}
+.welcome-card-icon{display:grid;place-items:center;width:36px;height:36px;border:1px solid #d9c9a6;border-radius:50%;margin-bottom:19px;color:#a78953}
+.welcome-card-icon svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.5}
+.hero-welcome-card .eyebrow{font-size:8px;letter-spacing:.17em;color:#8b7955}
+.hero-welcome-card>strong{display:block;font:500 23px/1.25 var(--serif);margin:10px 0 19px}
+.hero-welcome-card>a{display:flex;justify-content:space-between;gap:8px;padding-top:13px;border-top:1px solid #e4dfd3;font-size:9px;font-weight:700;color:var(--forest)}
+.hero-welcome-card>a span{color:#a88954;font-size:14px}
+.hero-scroll{position:absolute;bottom:25px;left:max(24px,calc((100% - var(--container))/2));display:flex;align-items:center;gap:12px;color:#d9dfd9;font-size:8px;letter-spacing:.18em}
+.hero-scroll span{width:28px;height:1px;background:var(--gold)}
+.home-welcome{background:var(--paper);overflow:hidden}
+.home-welcome-grid{display:grid;grid-template-columns:1fr 1fr;gap:105px;align-items:center}
+.welcome-photo-stack{position:relative;padding:0 38px 42px 0;max-width:540px}
+.welcome-photo-main{width:100%;height:500px;object-fit:cover;display:block;filter:saturate(.82)}
+.welcome-photo-stack:after{content:"";position:absolute;inset:18px 18px 60px 18px;border:1px solid rgba(199,166,107,.8);pointer-events:none}
+.welcome-photo-note{position:absolute;right:0;bottom:0;width:225px;padding:22px 25px;background:var(--forest);color:white;z-index:2}
+.welcome-photo-note span{display:block;color:#d8bd87;font-size:8px;letter-spacing:.17em;margin-bottom:10px}
+.welcome-photo-note strong{font:500 24px/1.2 var(--serif)}
+.welcome-photo-index{position:absolute;left:0;bottom:12px;writing-mode:vertical-rl;transform:rotate(180deg);font-size:8px;letter-spacing:.17em;color:#8a8e83}
+.home-welcome-copy{max-width:530px}
+.home-welcome-copy>.eyebrow{display:flex;align-items:center;gap:12px}
+.home-welcome-copy h2{font:500 clamp(38px,4vw,55px)/1.15 var(--serif);letter-spacing:-.03em;margin:22px 0}
+.home-welcome-copy h2 em{color:#a88b57}
+.home-welcome-copy p{font-size:13px;line-height:1.9;color:#6e776e}
+.home-welcome-copy .welcome-lead{font:500 19px/1.55 var(--serif);color:#39473d;margin-bottom:14px}
+.welcome-signoff{display:flex;align-items:center;gap:12px;margin:27px 0 23px;color:#9b8355;font-size:8px;letter-spacing:.17em}
+.signoff-rule{width:38px;height:1px;background:var(--gold)}
+.home-service-section{background:#eaece5;padding:0 0 78px}
+.home-service-panel{display:grid;grid-template-columns:1fr .82fr;background:var(--forest);color:white;position:relative;top:0;min-height:390px;box-shadow:0 22px 60px rgba(17,51,39,.12)}
+.service-panel-intro{padding:60px 8% 55px 10%;background:linear-gradient(135deg,#173f33,#0e3027)}
+.service-panel-intro h2{font:500 clamp(38px,4.4vw,58px)/1.08 var(--serif);margin:18px 0}
+.service-panel-intro p{font-size:12px;line-height:1.8;color:#d2ddd4;max-width:380px;margin-bottom:25px}
+.service-panel-details{padding:48px 11%;background:#f8f6ef;color:var(--forest);position:relative}
+.service-panel-top{display:flex;justify-content:space-between;align-items:center;font-size:8px;letter-spacing:.16em;color:#8a805f;font-weight:700}
+.service-live-dot{width:7px;height:7px;background:#b69a63;border-radius:50%;box-shadow:0 0 0 5px #b69a631b}
+.service-panel-day{font:500 66px/.95 var(--serif);color:#c0a16a;margin:24px 0 10px}
+.service-panel-details h3{font:500 27px/1.2 var(--serif);margin:0 0 8px}
+.service-panel-details>p{font-size:11px;color:#6d786e;margin-bottom:23px}
+.service-panel-meta{display:flex;justify-content:space-between;gap:15px;border-top:1px solid #e3dfd3;padding:12px 0}
+.service-panel-meta span{font-size:8px;letter-spacing:.13em;color:#9a8b68}
+.service-panel-meta strong{font-size:10px;text-align:right}
+.service-confirm-note{display:block;margin-top:10px;font-size:9px;line-height:1.5;color:#7c8278}
+.home-ministries{background:#fbfaf6}
+.home-section-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:35px;margin-bottom:37px}
+.home-section-heading>.text-link{flex:none;margin-bottom:12px}
+.home-section-heading .section-intro{margin:0}
+.home-section-heading .section-intro h2{max-width:660px}
+.home-ministry-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.home-ministry-card{height:390px;position:relative;display:block;overflow:hidden;background:#1a392e;color:white}
+.home-ministry-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .65s cubic-bezier(.2,.7,.2,1);filter:saturate(.78)}
+.home-ministry-card:hover img{transform:scale(1.06)}
+.ministry-card-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,22,17,.25),transparent 30%,rgba(5,20,15,.86))}
+.ministry-card-number{position:absolute;top:20px;left:19px;font-size:8px;letter-spacing:.15em;color:#f0e8d8}
+.ministry-card-copy{position:absolute;left:22px;right:18px;bottom:22px}
+.ministry-card-copy small{display:block;color:#ddc58f;font-size:8px;letter-spacing:.16em;margin-bottom:8px}
+.ministry-card-copy strong{display:block;font:500 26px/1.12 var(--serif);margin-bottom:17px}
+.ministry-card-copy i{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #ffffff6b;padding-top:12px;font-size:9px;font-style:normal;color:#f1eee7}
+.ministry-card-copy b{font-size:15px;color:#e0c58f}
+.home-image-disclaimer{font-size:9px;color:#92958b;margin-top:15px;text-align:right}
+.home-purpose-band{position:relative;min-height:520px;display:flex;align-items:center;overflow:hidden;background:#102c24;color:white}
+.purpose-band-image{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=2200&q=85') center 48%/cover;filter:saturate(.65)}
+.purpose-band-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(7,29,22,.92),rgba(9,35,27,.7) 55%,rgba(9,35,27,.2))}
+.purpose-band-content{position:relative;padding-top:90px;padding-bottom:90px}
+.purpose-band-content h2{font:500 clamp(40px,5vw,65px)/1.13 var(--serif);letter-spacing:-.03em;max-width:780px;margin:20px 0}
+.purpose-band-content p{font-size:13px;line-height:1.85;color:#dce3dc;max-width:520px;margin-bottom:27px}
+.home-next-steps{background:#f1f0e9}
+.next-step-grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #dcded5;border-bottom:1px solid #dcded5}
+.next-step-card{position:relative;padding:34px 36px 35px 0;min-height:280px}
+.next-step-card+.next-step-card{border-left:1px solid #dcded5;padding-left:36px}
+.next-step-no{position:absolute;right:25px;top:34px;color:#b49a68;font-size:9px;letter-spacing:.14em}
+.next-step-icon{display:grid;place-items:center;width:44px;height:44px;border:1px solid #d4c39e;color:#9b8050;margin-bottom:25px}
+.next-step-icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.4}
+.next-step-card h3{font:500 25px var(--serif);margin:0 0 10px;color:#20392d}
+.next-step-card p{font-size:11px;line-height:1.8;color:#737b71;max-width:290px;min-height:60px}
+.next-step-card .text-link{margin-top:12px}
+.home-events-section{background:#fbfaf6}
+.home-events-grid .empty-state{grid-column:1/-1}
+.home-word-section{padding:90px 0;background:#e8ebe4}
+.home-word-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:95px;align-items:center}
+.home-word-art{height:310px;background:#153b30;color:#fff;display:flex;flex-direction:column;justify-content:space-between;padding:28px 34px;position:relative;overflow:hidden}
+.home-word-art:before,.home-word-art:after{content:"";position:absolute;border:1px solid rgba(205,177,119,.35);border-radius:50%;width:280px;height:280px;right:-65px;top:70px}
+.home-word-art:after{width:220px;height:220px;right:-35px;top:100px}
+.word-art-overline,.word-art-reference{font-size:8px;letter-spacing:.2em;color:#e1c58e;position:relative;z-index:1}
+.word-art-quote{font:200px/.8 var(--serif);color:#d1b67f;position:relative;z-index:1;margin-top:20px}
+.home-word-copy h2{font:500 clamp(36px,4vw,50px)/1.15 var(--serif);margin:17px 0}
+.home-word-copy p{font-size:12px;line-height:1.9;color:#6f786e;max-width:470px;margin-bottom:24px}
+.home-testimony-section{background:#12392f;color:white;padding:80px 0;position:relative;overflow:hidden}
+.home-testimony-section:after{content:"";position:absolute;width:420px;height:420px;border:1px solid rgba(206,179,125,.2);border-radius:50%;right:8%;top:-170px;box-shadow:0 0 0 35px rgba(255,255,255,.025),0 0 0 70px rgba(255,255,255,.02)}
+.home-testimony-inner{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}
+.home-testimony-inner h2{font:500 clamp(38px,4.5vw,57px)/1.12 var(--serif);margin:17px 0}
+.home-testimony-inner p{max-width:480px;color:#d1ddd4;font-size:12px;line-height:1.8;margin-bottom:24px}
+.testimony-symbol{font:230px/.6 var(--serif);color:#c5a76e;margin-right:12%}
+.home-final-cta{background:#f1f0e9}
+.final-cta-panel{position:relative;overflow:hidden;display:flex;justify-content:space-between;align-items:center;gap:35px;padding:58px 7%;background:#0e2e25;color:white}
+.final-cta-panel:before{content:"";position:absolute;width:400px;height:400px;border:1px solid rgba(207,180,124,.22);border-radius:50%;right:15%;top:-250px;box-shadow:0 0 0 35px rgba(255,255,255,.025),0 0 0 70px rgba(255,255,255,.02)}
+.final-cta-panel>div,.final-cta-actions{position:relative;z-index:1}
+.final-cta-panel h2{font:500 clamp(38px,4vw,52px)/1.1 var(--serif);margin:14px 0}
+.final-cta-panel p{font-size:12px;color:#d2ddd4;max-width:430px}
+.final-cta-actions{display:flex;flex-direction:column;gap:12px;min-width:190px}
+.final-cta-cross{position:absolute;right:4%;bottom:-62px;font-size:190px;color:rgba(214,190,143,.07);line-height:1}
+.section-intro h2{letter-spacing:-.025em}
+.text-link{font-weight:700}
+.btn{transition:transform .2s ease,background .2s ease,border-color .2s ease}
+.btn:hover{transform:translateY(-2px)}
+.page-hero{background:linear-gradient(115deg,#0d3027,#1a493a)}
+@media(max-width:1050px){
+ .home-welcome-grid{gap:55px}.home-ministry-grid{grid-template-columns:repeat(2,1fr)}
+ .home-ministry-card{height:350px}.hero-welcome-card{width:220px}
+}
+@media(max-width:760px){
+ .home-hero{height:auto;min-height:760px}.home-hero-inner{display:block;padding-top:115px;padding-bottom:110px}
+ .home-hero h1{font-size:clamp(46px,11vw,67px);margin:23px 0}.home-hero-copy>p{font-size:13px}
+ .hero-welcome-card{display:none}.hero-trust-line{gap:7px;font-size:7px;margin-top:32px}
+ .hero-scroll{left:18px;bottom:22px}
+ .home-welcome-grid,.home-service-panel,.home-word-grid{grid-template-columns:1fr;gap:40px}
+ .welcome-photo-stack{max-width:520px;margin:0 auto;width:100%;padding-right:26px}
+ .welcome-photo-main{height:390px}.welcome-photo-note{width:190px;padding:18px}.welcome-photo-note strong{font-size:21px}
+ .home-service-section{padding:0 0 55px}.service-panel-intro,.service-panel-details{padding:38px 27px}
+ .service-panel-intro h2{font-size:45px}.service-panel-day{font-size:55px}
+ .home-section-heading{display:block}.home-section-heading>.text-link{display:inline-flex;margin:18px 0 0}
+ .home-ministry-grid{grid-template-columns:1fr 1fr;gap:9px}.home-ministry-card{height:290px}
+ .ministry-card-copy{left:14px;right:12px;bottom:16px}.ministry-card-copy strong{font-size:21px}
+ .ministry-card-number{left:13px;top:14px;font-size:7px}
+ .purpose-band-content{padding-top:75px;padding-bottom:75px}.purpose-band-content h2{font-size:43px}
+ .next-step-grid{grid-template-columns:1fr}.next-step-card,.next-step-card+.next-step-card{border-left:0;border-bottom:1px solid #dcded5;padding:26px 0;min-height:0}
+ .next-step-card:last-child{border-bottom:0}.next-step-card p{min-height:0}
+ .home-word-section{padding:65px 0}.home-word-grid{gap:35px}.home-word-art{height:250px}
+ .home-testimony-section{padding:65px 0}.home-testimony-inner h2{font-size:40px}.testimony-symbol{font-size:110px;margin:12px 0 0}
+ .final-cta-panel{display:block;padding:40px 27px}.final-cta-actions{margin-top:25px;max-width:250px}.final-cta-cross{font-size:120px;right:2%;bottom:-40px}
+}
+@media(max-width:430px){
+ .hero-kicker{font-size:7px;letter-spacing:.13em}.home-hero{min-height:710px}
+ .home-ministry-grid{grid-template-columns:1fr}.home-ministry-card{height:340px}
+ .hero-trust-line{flex-wrap:wrap}.home-welcome-copy h2{font-size:39px}
+ .welcome-photo-main{height:330px}.welcome-photo-note{width:170px}
+}
