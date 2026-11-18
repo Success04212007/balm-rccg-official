@@ -209,3 +209,56 @@
  .pastor-welcome-copy h2{font-size:38px}
  .service-other-days span{align-items:flex-start}
 }
+
+
+/* Role-aware administration workspace */
+.admin-module{margin-top:28px;padding:26px;background:#fbfaf6;border:1px solid var(--line)}
+.admin-module h3{font:500 23px var(--serif);margin:0 0 7px;color:var(--forest)}
+.admin-module>p,.admin-module-heading p{font-size:11px;color:#727a70;line-height:1.65}
+.admin-module-heading{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+.admin-module-heading p{margin:7px 0 0}
+.admin-content-toolbar{display:flex;justify-content:space-between;align-items:flex-end;gap:15px;margin:18px 0;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.admin-content-toolbar label,.admin-edit-form label,.admin-private-controls label{display:flex;flex-direction:column;gap:7px;font-size:10px;font-weight:700;color:#4e5b51}
+.admin-content-toolbar select,.admin-private-controls select{min-width:190px;padding:10px 12px;border:1px solid #d9ddd5;background:white;color:var(--ink);font-size:11px}
+.admin-content-toolbar>div{display:flex;gap:8px;flex-wrap:wrap}
+.admin-content-list{display:grid;gap:0}
+.admin-content-row{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:15px 0;border-bottom:1px solid var(--line)}
+.admin-content-row>div:first-child{display:grid;gap:5px;min-width:0}
+.admin-content-row strong{font:500 17px var(--serif);color:#273b2e}
+.admin-content-row small{font-size:9px;color:#848b82;overflow-wrap:anywhere}
+.admin-content-row .status-pill{justify-self:start;margin:0}
+.admin-row-actions{display:flex;gap:7px;flex-wrap:wrap}
+.admin-row-actions .btn,.admin-content-toolbar .btn,.admin-private-controls .btn{min-height:34px;padding:0 11px;font-size:9px}
+.admin-edit-form{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px;padding:22px;background:#f0f1eb;border:1px solid #dfe2d9}
+.admin-edit-form[hidden]{display:none!important}
+.admin-form-title{display:flex;justify-content:space-between;align-items:center;grid-column:1/-1}
+.admin-form-title h4{font:500 21px var(--serif);margin:0}
+.admin-edit-form>label{margin:0}
+.admin-edit-form>label:nth-of-type(3),.admin-edit-form>label:nth-of-type(4),.admin-edit-form>label:nth-of-type(5){grid-column:1/-1}
+.admin-edit-form input:not([type=checkbox]),.admin-edit-form textarea{width:100%;border:1px solid #d7dbd2;background:#fff;padding:11px 12px;font:11px var(--sans);color:var(--ink)}
+.admin-edit-form textarea{resize:vertical}
+.admin-edit-form .admin-publish-toggle{display:flex;flex-direction:row;align-items:center;gap:9px;grid-column:1/-1}
+.admin-publish-toggle input{accent-color:var(--forest)}
+.admin-edit-form>button[type=submit],.admin-edit-form>.form-feedback{grid-column:1/-1}
+.admin-private-record{padding:17px 0;border-bottom:1px solid var(--line)}
+.admin-private-heading{display:flex;justify-content:space-between;gap:12px}
+.admin-private-heading strong{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#9c8150}
+.admin-private-heading span{font-size:9px;color:#858b82}
+.admin-private-record>p{font-size:10px;line-height:1.65;color:#697369;margin:8px 0}
+.admin-private-message{white-space:pre-wrap;background:#f2f1eb;padding:12px}
+.admin-private-controls{display:flex;align-items:flex-end;gap:12px}
+.admin-private-controls label{margin:0}
+.admin-private-controls select{min-width:150px}
+@media(max-width:680px){
+ .admin-module{padding:18px}
+ .admin-content-toolbar{display:grid;grid-template-columns:1fr;align-items:stretch}
+ .admin-content-toolbar label,.admin-content-toolbar select{width:100%}
+ .admin-content-toolbar>div{display:grid;grid-template-columns:1fr 1fr}
+ .admin-content-row{align-items:flex-start;flex-direction:column}
+ .admin-edit-form{grid-template-columns:1fr;padding:16px}
+ .admin-edit-form>label,.admin-edit-form>label:nth-of-type(3),.admin-edit-form>label:nth-of-type(4),.admin-edit-form>label:nth-of-type(5){grid-column:1}
+ .admin-form-title{grid-column:1}
+ .admin-private-heading{display:block}
+ .admin-private-controls{align-items:stretch;flex-direction:column}
+ .admin-private-controls select{width:100%}
+}
