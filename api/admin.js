@@ -1,4 +1,6 @@
 const allowedTypes=new Set(['events','sermons','announcements','ministries','testimonies','house_fellowships','leadership','service_schedules','gallery']);
+const canViewPrivate=(role)=>['super_admin','area_pastor','pastoral','pastoral_support'].includes(role);
+const canManage=(role,type)=>['super_admin','editor','content_admin'].includes(role)||(role==='media_admin'&&['sermons','gallery'].includes(type))||(role==='event_admin'&&type==='events');
 const supa=()=>({url:(process.env.SUPABASE_URL||'').replace(/\/$/,''),anon:process.env.SUPABASE_ANON_KEY,service:process.env.SUPABASE_SERVICE_ROLE_KEY});
 async function authUser(token,cfg) {
  const r=await fetch(cfg.url+'/auth/v1/user',{headers:{apikey:cfg.anon,Authorization:'Bearer '+token}});
@@ -7,6 +9,12 @@ async function authUser(token,cfg) {
 async function db(cfg,path,method='GET',body) {
  const r=await fetch(cfg.url+'/rest/v1/'+path,{method,headers:{apikey:cfg.service,Authorization:'Bearer '+cfg.service,'Content-Type':'application/json',Prefer:method==='GET'?'count=exact':'return=representation'},...(body?{body:JSON.stringify(body)}:{})});
  const text=await r.text();if(!r.ok)throw new Error('Database operation failed: '+text.slice(0,250));return text?JSON.parse(text):[];
+}
+async function audit(cfg,actorId,action,entityType,entityId,details={}) {
+ await db(cfg,'admin_audit_logs','POST',{
+  actor_id:actorId,action,entity_type:entityType,entity_id:entityId||null,
+  details,created_at:new Date().toISOString()
+ });
 }
 module.exports=async function handler(req,res) {
  res.setHeader('Cache-Control','no-store');
@@ -31,7 +39,7 @@ module.exports=async function handler(req,res) {
   if(!admins.length)return res.status(403).json({error:'Administrator access has been revoked.'});
   const role=admins[0].role;
   if(body.action==='dashboard') {
-   const canViewPrivateSubmissions=['super_admin','pastoral'].includes(role);
+   const canViewPrivateSubmissions=canViewPrivate(role);
    const [content,submissions,events,sermons]=await Promise.all([
     db(cfg,'site_content?select=id'),
     canViewPrivateSubmissions
@@ -42,16 +50,16 @@ module.exports=async function handler(req,res) {
    ]);
    return res.status(200).json({
     user:{email:user.email},role,
-    permissions:{content:['super_admin','editor'].includes(role),private_submissions:canViewPrivateSubmissions},
+    permissions:{content:['super_admin','editor','content_admin','media_admin','event_admin'].includes(role),private_submissions:canViewPrivateSubmissions},
     counts:{content:content.length,new_submissions:canViewPrivateSubmissions?submissions.filter(x=>x.status==='new').length:null,events:events.length,sermons:sermons.length},
     recent_submissions:submissions
    });
   }
   const contentActions=['list_content','save_content','delete_content'];
   const privateActions=['list_submissions','update_submission_status'];
-  if(contentActions.includes(body.action) && !['super_admin','editor'].includes(role))
+  if(contentActions.includes(body.action) && !canManage(role,String(body.content_type||body.type||'')))
     return res.status(403).json({error:'Your role does not permit website content management.'});
-  if(privateActions.includes(body.action) && !['super_admin','pastoral'].includes(role))
+  if(privateActions.includes(body.action) && !canViewPrivate(role))
     return res.status(403).json({error:'Your role does not permit access to private pastoral submissions.'});
   if(body.action==='list_content') {
    const type=String(body.type||'');if(!allowedTypes.has(type))return res.status(400).json({error:'Invalid content type.'});
@@ -63,11 +71,18 @@ module.exports=async function handler(req,res) {
    const title=String(body.title||'').trim().slice(0,180);if(!title)return res.status(400).json({error:'A title is required.'});
    const record={content_type:type,title,slug:String(body.slug||title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')).slice(0,180),summary:String(body.summary||'').slice(0,600),body:String(body.body||'').slice(0,10000),data:body.data&&typeof body.data==='object'?body.data:{},published:body.published===true,updated_at:new Date().toISOString()};
    const result=body.id?await db(cfg,'site_content?id=eq.'+encodeURIComponent(String(body.id)), 'PATCH',record):await db(cfg,'site_content','POST',{...record,created_by:user.id});
+   const savedId=result[0]?.id||body.id||null;
+   await audit(cfg,user.id,body.id?'content.updated':'content.created',type,savedId,{role});
    return res.status(200).json({saved:true,item:result[0]||null});
   }
   if(body.action==='delete_content') {
    const id=String(body.id||'');if(!id)return res.status(400).json({error:'Content ID is required.'});
-   await db(cfg,'site_content?id=eq.'+encodeURIComponent(id),'DELETE');return res.status(200).json({deleted:true});
+   const existing=await db(cfg,'site_content?id=eq.'+encodeURIComponent(id)+'&select=id,content_type');
+   if(!existing.length)return res.status(404).json({error:'Content item not found.'});
+   if(!canManage(role,existing[0].content_type))return res.status(403).json({error:'Your role cannot delete this content type.'});
+   await db(cfg,'site_content?id=eq.'+encodeURIComponent(id),'DELETE');
+   await audit(cfg,user.id,'content.deleted',existing[0].content_type,id,{role});
+   return res.status(200).json({deleted:true});
   }
   if(body.action==='list_submissions') {
    const type=String(body.type||'');const filter=type?'&submission_type=eq.'+encodeURIComponent(type):'';
@@ -78,6 +93,7 @@ module.exports=async function handler(req,res) {
    const id=String(body.id||''),status=String(body.status||'');
    if(!id||!['new','in_review','responded','closed'].includes(status))return res.status(400).json({error:'Invalid submission update.'});
    await db(cfg,'form_submissions?id=eq.'+encodeURIComponent(id),'PATCH',{status,updated_at:new Date().toISOString()});
+   await audit(cfg,user.id,'submission.status_updated','form_submission',id,{status,role});
    return res.status(200).json({updated:true});
   }
   return res.status(400).json({error:'Unknown administrator action.'});
