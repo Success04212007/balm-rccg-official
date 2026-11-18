@@ -674,6 +674,7 @@ function bindAdminContentManager(mount,role) {
   <input type="hidden" name="id">
   <label>Title<input name="title" required maxlength="180" placeholder="Content title"></label>
   <label>URL slug<input name="slug" maxlength="180" placeholder="generated-from-title"></label>
+  <label>Start date & time <span class="optional">(optional; especially for events)</span><input name="starts_at" type="datetime-local"></label>
   <label>Summary<textarea name="summary" rows="2" maxlength="600" placeholder="Short public summary"></textarea></label>
   <label>Main content<textarea name="body" rows="5" maxlength="10000" placeholder="Full content or description"></textarea></label>
   <label>Additional structured information (JSON)<textarea name="data" rows="4" placeholder='{"date":"2026-12-01","venue":"Church venue"}'></textarea></label>
@@ -689,6 +690,7 @@ function bindAdminContentManager(mount,role) {
  function editItem(item){
   form.hidden=false;field('id').value=item.id||'';field('title').value=item.title||'';field('slug').value=item.slug||'';
   field('summary').value=item.summary||'';field('body').value=item.body||'';
+  field('starts_at').value=item.starts_at?new Date(item.starts_at).toISOString().slice(0,16):'';
   field('data').value=JSON.stringify(item.data||{},null,2);field('published').checked=item.published===true;
   mount.querySelector('#adminContentFormTitle').textContent=item.id?'Edit content':'Create content';
   form.scrollIntoView({behavior:'smooth',block:'nearest'});
@@ -718,7 +720,7 @@ function bindAdminContentManager(mount,role) {
    const raw=field('data').value.trim();
    const data=raw?JSON.parse(raw):{};
    if(!data||Array.isArray(data)||typeof data!=='object')throw new Error('Additional information must be a JSON object.');
-   await adminRequest({action:'save_content',id:field('id').value||undefined,content_type:typeSelect.value,title:field('title').value,slug:field('slug').value,summary:field('summary').value,body:field('body').value,data,published:field('published').checked});
+   await adminRequest({action:'save_content',id:field('id').value||undefined,content_type:typeSelect.value,title:field('title').value,slug:field('slug').value,summary:field('summary').value,body:field('body').value,starts_at:field('starts_at').value?new Date(field('starts_at').value).toISOString():null,data,published:field('published').checked});
    resetForm();await loadItems();
    list.insertAdjacentHTML('afterbegin','<p class="form-feedback success">Content saved successfully.</p>');
   }catch(err){feedback.className='form-feedback error';feedback.textContent=err instanceof SyntaxError?'Please enter valid JSON in the additional information field.':err.message;}
