@@ -94,7 +94,7 @@ grant all on public.admin_audit_logs to service_role;
 -- event_admin: events only
 -- The server API enforces the relevant permissions and records write actions.
 --
--- IMPORTANT: Restrict /api/admin private submission actions to super_admin
--- or pastoral roles before adding more pastoral users. The starter API is
--- deliberately conservative; have the church review the role matrix before
--- provisioning additional accounts.
+-- IMPORTANT: The current /api/admin handler permits private submission access
+-- only to super_admin, area_pastor, pastoral and pastoral_support roles.
+-- Review and approve this role matrix with church leadership before assigning
+-- accounts. Do not broaden access to prayer or counselling information casually.
