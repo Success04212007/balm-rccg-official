@@ -262,3 +262,18 @@
  .admin-private-controls{align-items:stretch;flex-direction:column}
  .admin-private-controls select{width:100%}
 }
+
+
+/* Additional Balm of Galid brand and biblical-story details */
+.home-brand-promise{margin:16px 0 0!important;color:#e3d0a7!important;font:italic 15px/1.4 var(--serif)!important;letter-spacing:.015em}
+.home-photo-note{display:block;margin-top:8px;color:#d0d7cf;font-size:8px;letter-spacing:.07em}
+.about-scripture-banner{position:relative;overflow:hidden;background:#102f26;color:#fff;padding:58px 0}
+.about-scripture-banner:after{content:"";position:absolute;width:360px;height:360px;border:1px solid rgba(207,178,119,.24);border-radius:50%;right:11%;top:-230px;box-shadow:0 0 0 28px rgba(255,255,255,.025),0 0 0 58px rgba(255,255,255,.02)}
+.about-scripture-content{position:relative;z-index:1}
+.about-scripture-content h2{font:500 clamp(34px,4vw,49px)/1.1 var(--serif);margin:12px 0 7px}
+.about-scripture-content>p{font:italic 17px var(--serif);color:#dfc58f;margin:0 0 12px}
+.about-scripture-content small{font-size:10px;letter-spacing:.025em;color:#d0dad2}
+@media(max-width:680px){
+ .home-brand-promise{font-size:13px!important;margin-top:12px!important}
+ .about-scripture-banner{padding:44px 0}
+}
