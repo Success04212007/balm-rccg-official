@@ -172,3 +172,40 @@
  .hero-trust-line{flex-wrap:wrap}.home-welcome-copy h2{font-size:39px}
  .welcome-photo-main{height:330px}.welcome-photo-note{width:170px}
 }
+
+
+/* =========================================================
+   OFFICIAL BALM OF GALID INFORMATION — PASTOR, LOCATION, SERVICES
+   ========================================================= */
+.home-hero-location{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:17px;color:#d8dfd8;font-size:9px;letter-spacing:.045em}
+.home-hero-location>span:nth-child(2){color:var(--gold)}
+.home-hero-location strong{color:#f0dfba;font-weight:600}
+.pastor-welcome-section{padding:76px 0;background:#f1f0e9}
+.pastor-welcome-grid{display:grid;grid-template-columns:.76fr 1.24fr;gap:75px;align-items:center;max-width:1050px}
+.pastor-portrait-placeholder{min-height:350px;background:linear-gradient(145deg,#dfe5dc,#cdd7cd);border:1px solid #c6d0c5;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#4c6355;position:relative;overflow:hidden}
+.pastor-portrait-placeholder:before,.pastor-portrait-placeholder:after{content:"";position:absolute;border:1px solid rgba(164,136,83,.42);border-radius:50%;width:260px;height:260px}
+.pastor-portrait-placeholder:after{width:215px;height:215px}
+.pastor-portrait-placeholder span,.pastor-portrait-placeholder small,.pastor-portrait-placeholder strong{position:relative;z-index:1}
+.pastor-portrait-placeholder span{font-size:8px;letter-spacing:.17em}
+.pastor-portrait-placeholder strong{font:500 75px/1 var(--serif);color:#315747;margin:17px 0}
+.pastor-portrait-placeholder small{font-size:9px;color:#65776a}
+.pastor-welcome-copy h2{font:500 clamp(35px,4vw,50px)/1.13 var(--serif);margin:15px 0 8px;color:#21372b}
+.pastor-designation{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:#a08450;font-weight:700;margin-bottom:22px}
+.pastor-welcome-copy>p:not(.pastor-designation){font-size:13px;line-height:1.9;color:#68736a;max-width:590px}
+.pastor-welcome-copy .pastor-message-note{font-size:10px!important;border-left:2px solid var(--gold);padding:9px 13px;margin:20px 0;color:#7c806f!important;background:#e8e8df}
+.service-other-days{display:grid;gap:8px;margin-top:11px;padding:12px 0;border-top:1px solid #e3dfd3;border-bottom:1px solid #e3dfd3}
+.service-other-days span{display:flex;justify-content:space-between;gap:12px;font-size:8px;letter-spacing:.1em;color:#99845a}
+.service-other-days b{font-size:9px;letter-spacing:0;color:#3d4d41;text-align:right}
+.map-placeholder{gap:6px}
+.map-directions-link{display:inline-flex;margin-top:15px;padding:11px 16px;background:var(--forest);color:#fff;font-size:10px;font-weight:700}
+.map-directions-link:hover{background:#1b5442}
+.contact-detail-list article>a{font-size:10px;color:#917545;margin-top:8px}
+.hierarchy-card strong{background:var(--forest);color:#fff}
+@media(max-width:760px){
+ .home-hero-location{font-size:8px;line-height:1.8}
+ .pastor-welcome-section{padding:58px 0}
+ .pastor-welcome-grid{grid-template-columns:1fr;gap:30px}
+ .pastor-portrait-placeholder{min-height:280px;max-width:440px;width:100%;margin:auto}
+ .pastor-welcome-copy h2{font-size:38px}
+ .service-other-days span{align-items:flex-start}
+}
