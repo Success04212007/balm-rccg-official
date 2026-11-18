@@ -573,7 +573,7 @@ function bindAdminContentManager(mount,role) {
    if(!data||Array.isArray(data)||typeof data!=='object')throw new Error('Additional information must be a JSON object.');
    await adminRequest({action:'save_content',id:field('id').value||undefined,content_type:typeSelect.value,title:field('title').value,slug:field('slug').value,summary:field('summary').value,body:field('body').value,data,published:field('published').checked});
    resetForm();await loadItems();
-   feedback.className='form-feedback success';feedback.textContent='Content saved successfully.';
+   list.insertAdjacentHTML('afterbegin','<p class="form-feedback success">Content saved successfully.</p>');
   }catch(err){feedback.className='form-feedback error';feedback.textContent=err instanceof SyntaxError?'Please enter valid JSON in the additional information field.':err.message;}
   finally{btn.disabled=false;}
  });
