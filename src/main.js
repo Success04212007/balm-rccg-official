@@ -360,6 +360,29 @@ function privacyPage() {
  <section class="section-pad"><div class="container narrow-copy"><h2>Privacy and personal information</h2><p>This website is being prepared for Balm of Galid RCCG Area Church. The church must review and approve this notice, identify its responsible data contact and confirm its retention practices before public launch.</p><h3>Information you submit</h3><p>Forms may collect your name, contact information and the message you choose to send. Prayer requests, counselling messages and other sensitive enquiries are private by default and must be restricted to authorised personnel.</p><h3>Use and access</h3><p>Information should be used only for the purpose described by the form, shared only with authorised church personnel and retained only for an approved period. It must not be published as a testimony or public story without explicit permission.</p><h3>Payments</h3><p>This website does not collect or store card details. Any future giving integration must use an approved payment provider and verified church payment details.</p><div class="notice-card"><strong>Publication status: draft for church review</strong><p>This notice is not legal advice and should be reviewed by the church’s responsible leadership or legal adviser before the website is publicly launched.</p></div></div></section>`;
 }
 
+function termsPage() {
+ return `${pageHero('TERMS OF USE','Using this website responsibly.','Important information about the Balm of Galid RCCG Area Church website and its online services.')}
+ <section class="section-pad"><div class="container narrow-copy">
+  <h2>About this website</h2>
+  <p>This website is intended to share approved information about Balm of Galid RCCG Area Church, its worship gatherings, ministries, events, messages and community life. Website information may be updated by authorised church representatives.</p>
+  <h3>Accuracy of information</h3>
+  <p>Service arrangements, event information, ministry activities and other details may change. Please use the latest confirmed church announcement for time-sensitive information. Where a detail is marked pending confirmation, do not treat it as a final arrangement.</p>
+  <h3>Forms and communication</h3>
+  <p>When you submit a visitor enquiry, prayer request, counselling request, event registration, testimony or contact message, provide information you are comfortable sharing and that is accurate to the best of your knowledge. Submissions are reviewed by authorised personnel for the stated purpose. A submission does not guarantee a response within a particular time.</p>
+  <h3>Prayer, counselling and pastoral support</h3>
+  <p>Online forms are a way to contact the church and are not an emergency service. Where you or another person is in immediate danger, contact appropriate local emergency or professional support without waiting for a response through this website.</p>
+  <h3>Media, photographs and testimonies</h3>
+  <p>Church media and testimonies are published only when approved for sharing. Do not copy, redistribute or use photographs, recordings or written material in a way that violates the rights or privacy of contributors or the church.</p>
+  <h3>Giving and payments</h3>
+  <p>Only use giving instructions and payment channels that have been formally verified and announced by the church. This website does not ask visitors to send card details through a contact form or message.</p>
+  <h3>Third-party services and links</h3>
+  <p>Links to maps, video platforms, payment providers or other external websites are provided for convenience. Those services are governed by their own terms and privacy notices.</p>
+  <h3>Changes to these terms</h3>
+  <p>The church may update this page as the website and its services develop. The current version will be published here.</p>
+  <div class="notice-card"><strong>Publication status: draft for church review</strong><p>These Terms of Use are a working draft, not legal advice. They must be reviewed and approved by the church’s responsible leadership and legal adviser before being treated as binding terms.</p></div>
+ </div></section>`;
+}
+
 function adminPage() {
  return `${pageHero('ADMINISTRATION','Church website administration.','Secure access for authorised Balm of Galid administrators.')}
  <section class="section-pad"><div class="container admin-wrap"><div class="admin-intro"><span class="eyebrow">RESTRICTED AREA</span><h2>Manage the church website.</h2><p>Access is limited to users who have been created and approved in the church’s authentication system. There is no public registration.</p></div><div id="adminMount"><form class="form-card admin-login" id="adminLogin"><div class="form-heading"><span class="eyebrow">AUTHORised ACCESS</span><h2>Administrator sign in</h2><p>Use your approved administrator account. Do not share your password.</p></div><label>Email address<input name="email" type="email" required autocomplete="username"></label><label>Password<input name="password" type="password" required autocomplete="current-password"></label><button class="btn btn-primary submit-btn">Sign in securely <span>${icon('arrow')}</span></button><p class="form-feedback" aria-live="polite"></p></form></div></div></section>`;
@@ -373,7 +396,7 @@ const pageTitles = {
 '/sermons':'Sermons & Media | Balm of Galid','/prayer':'Prayer & Counselling | Balm of Galid','/testimonies':'Testimonies | Balm of Galid',
 '/gallery':'Gallery | Balm of Galid','/give':'Giving | Balm of Galid','/visit':'Plan Your Visit | Balm of Galid',
 '/house-fellowship':'House Fellowship | Balm of Galid','/news':'News & Announcements | Balm of Galid','/contact':'Contact | Balm of Galid',
-'/privacy':'Privacy Notice | Balm of Galid','/admin':'Website Administration | Balm of Galid'
+'/privacy':'Privacy Notice | Balm of Galid','/terms':'Terms of Use | Balm of Galid','/admin':'Website Administration | Balm of Galid'
 };
 
 const pageDescriptions = {
@@ -393,6 +416,7 @@ const pageDescriptions = {
   '/news':'Read verified news and announcements from Balm of Galid RCCG Area Church.',
   '/contact':'Contact Balm of Galid RCCG Area Church in Ogijo, Ogun State, Nigeria.',
   '/privacy':'Read the privacy notice for the Balm of Galid RCCG Area Church website.',
+  '/terms':'Read the draft Terms of Use for the Balm of Galid RCCG Area Church website.',
   '/admin':'Secure administration sign-in for authorised Balm of Galid RCCG Area Church website administrators.'
 };
 
@@ -441,6 +465,7 @@ function render() {
  else if(path==='/news') content=newsPage();
  else if(path==='/contact') content=contactPage();
  else if(path==='/privacy') content=privacyPage();
+ else if(path==='/terms') content=termsPage();
  else if(path==='/admin') content=adminPage();
  else content=notFoundPage();
  applyPageMetadata(path);
