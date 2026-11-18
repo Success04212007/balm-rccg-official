@@ -31,15 +31,28 @@ module.exports=async function handler(req,res) {
   if(!admins.length)return res.status(403).json({error:'Administrator access has been revoked.'});
   const role=admins[0].role;
   if(body.action==='dashboard') {
+   const canViewPrivateSubmissions=['super_admin','pastoral'].includes(role);
    const [content,submissions,events,sermons]=await Promise.all([
     db(cfg,'site_content?select=id'),
-    db(cfg,'form_submissions?select=id,submission_type,created_at,status&order=created_at.desc&limit=8'),
+    canViewPrivateSubmissions
+      ? db(cfg,'form_submissions?select=id,submission_type,created_at,status&order=created_at.desc&limit=8')
+      : Promise.resolve([]),
     db(cfg,'site_content?content_type=eq.events&published=eq.true&select=id'),
     db(cfg,'site_content?content_type=eq.sermons&published=eq.true&select=id')
    ]);
-   return res.status(200).json({user:{email:user.email},role,counts:{content:content.length,new_submissions:submissions.filter(x=>x.status==='new').length,events:events.length,sermons:sermons.length},recent_submissions:submissions});
+   return res.status(200).json({
+    user:{email:user.email},role,
+    permissions:{content:['super_admin','editor'].includes(role),private_submissions:canViewPrivateSubmissions},
+    counts:{content:content.length,new_submissions:canViewPrivateSubmissions?submissions.filter(x=>x.status==='new').length:null,events:events.length,sermons:sermons.length},
+    recent_submissions:submissions
+   });
   }
-  if(!['super_admin','editor'].includes(role))return res.status(403).json({error:'Your role does not permit content management.'});
+  const contentActions=['list_content','save_content','delete_content'];
+  const privateActions=['list_submissions','update_submission_status'];
+  if(contentActions.includes(body.action) && !['super_admin','editor'].includes(role))
+    return res.status(403).json({error:'Your role does not permit website content management.'});
+  if(privateActions.includes(body.action) && !['super_admin','pastoral'].includes(role))
+    return res.status(403).json({error:'Your role does not permit access to private pastoral submissions.'});
   if(body.action==='list_content') {
    const type=String(body.type||'');if(!allowedTypes.has(type))return res.status(400).json({error:'Invalid content type.'});
    const items=await db(cfg,'site_content?content_type=eq.'+encodeURIComponent(type)+'&select=*&order=updated_at.desc&limit=100');
