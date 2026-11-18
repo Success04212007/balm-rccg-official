@@ -10,7 +10,9 @@ const A = {
   address: '19, First Avenue, Oshodi Oke, Jigaye Community, Ogijo, Ogun State, Nigeria',
   denomination: 'The Redeemed Christian Church of God',
   tagline: 'Where Healing, Hope, Faith and Restoration Meet.',
-  description: 'A Christ-centred community committed to worship, biblical teaching, prayer, discipleship, evangelism and service. A place to grow in faith, find fellowship and discover the hope of Jesus Christ.',
+  supportingMessage: 'A Place of Worship. A Family of Faith. A Community of Transformation.',
+  biblicalInspiration: 'Jeremiah 8:22',
+  description: 'Balm of Galid is committed to preaching the Gospel of Jesus Christ, raising spiritually mature believers, promoting holiness, strengthening families, encouraging purposeful Christian living and extending God’s love to the surrounding community.',
   heroImage: 'https://images.unsplash.com/photo-1507692049790-de58290a4334?auto=format&fit=crop&w=2200&q=85',
   worshipImage: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1200&q=85'
 };
@@ -18,13 +20,13 @@ const A = {
 const nav = [
   ['Home','/'], ['About Us','/about'], ['Leadership','/leadership'],
   ['Ministries','/ministries'], ['Worship & Services','/services'], ['Events','/events'],
-  ['Media Centre','/sermons'], ['Prayer','/prayer'], ['Testimonies','/testimonies'],
+  ['Media Centre','/sermons'], ['Prayer & Counselling','/prayer'], ['Testimonies','/testimonies'],
   ['Gallery','/gallery'], ['Give','/give'], ['Contact','/contact']
 ];
 
 const departments = [
-  ['Men’s Fellowship','Encouraging men to grow in Christ, lead with integrity and serve their families and community.','men'],
-  ['Women’s Fellowship','Building faith, strengthening families and creating room for meaningful Christian fellowship.','women'],
+  ['Men’s Fellowship — RCCG Men of Valor','Encouraging men to grow in Christ, lead with integrity and serve their families and community.','men'],
+  ['Women’s Fellowship — RCCG Women of Royal Heritage','Building faith, strengthening families and creating room for meaningful Christian fellowship.','women'],
   ['Youth Ministry','Equipping young people to know Christ, grow in purpose and influence their generation for good.','youth'],
   ['Teens Ministry','A safe, faith-filled environment for teenagers to learn, ask questions and build godly foundations.','teens'],
   ['Children’s Department','Helping children discover the love of Jesus through age-appropriate teaching and care.','children'],
@@ -37,7 +39,8 @@ const departments = [
   ['Welfare Department','Coordinating practical care and compassion for people in need.','welfare'],
   ['Media & Technical','Supporting the communication of the Gospel through responsible media and production.','media'],
   ['Follow-up & New Converts','Walking alongside new believers and helping people take their next steps in faith.','follow-up'],
-  ['House Fellowship','Creating smaller communities for prayer, Scripture, friendship and mutual care.','house-fellowship']
+  ['House Fellowship','Creating smaller communities for prayer, Scripture, friendship and mutual care.','house-fellowship'],
+  ['Workers & Ministers','Supporting the spiritual care, organisation and faithful service of the church.','workers-ministers']
 ];
 
 const schedules = [
@@ -252,7 +255,8 @@ function homePage() {
 function aboutPage() {
   return `${pageHero('ABOUT BALM OF GALID','A church family rooted in Christ and shaped by love.','Discover our purpose, our values and the faith that brings us together.')}
   <section class="section-pad"><div class="container narrow-copy"><span class="eyebrow">OUR STORY</span><h2>Growing together in faith, hope and service.</h2><p class="lead">${A.description}</p><p>Balm of Galid is part of the wider family of The Redeemed Christian Church of God. As an Area Church, it carries a responsibility to nurture worship, discipleship, fellowship and service in its local expression of the Gospel.</p><div class="notice-card"><strong>Our history is being documented.</strong><p>The date of establishment, founding leadership, milestones and verified history will be added following review and approval by the Area Church leadership.</p></div></div></section>
-  <section class="section-pad soft-bg"><div class="container"><div class="values-grid"><div>${sectionIntro('OUR VISION','A life transformed by Christ.','Our vision statement will be presented here in the wording formally approved by church leadership.')}</div><div>${sectionIntro('OUR MISSION','To share, nurture and serve.','Our mission statement will be confirmed with the church and published here.')}</div></div></div></section>
+  <section class="about-scripture-banner"><div class="container about-scripture-content"><span class="eyebrow light">OUR BIBLICAL INSPIRATION</span><h2>The Balm in Gilead.</h2><p>Jeremiah 8:22</p><small>The biblical image of healing and restoration inspires the heart behind the church’s name and message.</small></div></section>
+  <section class="section-pad soft-bg"><div class="container"><div class="values-grid"><div>${sectionIntro('OUR VISION','A life transformed by Christ.','The church’s formal vision statement will be published in the wording approved by Area Church leadership.')}</div><div>${sectionIntro('OUR MISSION','Preach the Gospel. Raise disciples. Serve with love.','Preaching the Gospel of Jesus Christ, raising spiritually mature believers, promoting holiness, strengthening families and extending God’s love to the surrounding community.')}</div></div></div></section>
   <section class="section-pad"><div class="container"><div class="section-intro center"><span class="eyebrow">WHAT GUIDES US</span><h2>Values that shape our life together.</h2><p>These values reflect the commitments expressed in the church’s ministry brief; final wording may be reviewed by leadership.</p></div><div class="values-list">${[['Faith in God','Trusting God and seeking to live by faith.'],['Holiness & righteousness','Pursuing a life that honours God.'],['Love & compassion','Treating every person with dignity and care.'],['Prayer & worship','Making room for the presence of God in every season.'],['Biblical truth','Grounding faith and practice in Scripture.'],['Excellence in service','Serving faithfully, responsibly and wholeheartedly.'],['Unity & fellowship','Growing together as one family in Christ.'],['Evangelism & discipleship','Sharing the Gospel and helping people grow as followers of Jesus.']].map(([t,d],i)=>`<article><span>0${i+1}</span><div><h3>${t}</h3><p>${d}</p></div></article>`).join('')}</div></div></section>
   <section class="section-pad soft-bg"><div class="container split-content"><div>${sectionIntro('OUR RCCG HERITAGE','Part of a wider family of faith.','Balm of Galid belongs to The Redeemed Christian Church of God, an international Christian denomination.')}
 <p>Balm of Galid is an Area Church within the confirmed RCCG administrative structure shown here.</p></div><div class="hierarchy-card"><span>CONFIRMED RCCG ADMINISTRATIVE STRUCTURE</span><b>RCCG International Headquarters</b><i>↓</i><b>Region 64</b><i>↓</i><b>Lagos Province 62</b><i>↓</i><b>Alpha Zone</b><i>↓</i><strong>Balm of Galid Area</strong></div></div></section>
