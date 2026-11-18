@@ -1,4 +1,4 @@
--- Balm of Gilead RCCG Area Church
+-- Balm of Galid RCCG Area Church
 -- Apply in a new Supabase project using the SQL editor.
 -- Keep SUPABASE_SERVICE_ROLE_KEY on the server only. Never put it in browser code.
 
@@ -6,10 +6,30 @@ create extension if not exists pgcrypto;
 
 create table if not exists public.admin_users (
   id uuid primary key references auth.users(id) on delete cascade,
-  role text not null check (role in ('super_admin','editor','pastoral')),
+  role text not null check (role in ('super_admin','editor','pastoral','area_pastor','content_admin','media_admin','event_admin','pastoral_support')),
   active boolean not null default true,
   created_at timestamptz not null default now()
 );
+
+-- Keep role constraints current when upgrading an existing church database.
+alter table public.admin_users drop constraint if exists admin_users_role_check;
+alter table public.admin_users add constraint admin_users_role_check
+  check (role in ('super_admin','editor','pastoral','area_pastor','content_admin','media_admin','event_admin','pastoral_support'));
+
+create table if not exists public.admin_audit_logs (
+  id uuid primary key default gen_random_uuid(),
+  actor_id uuid not null references auth.users(id) on delete restrict,
+  action text not null,
+  entity_type text not null,
+  entity_id text,
+  details jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists admin_audit_logs_created_at_idx
+  on public.admin_audit_logs(created_at desc);
+create index if not exists admin_audit_logs_actor_idx
+  on public.admin_audit_logs(actor_id, created_at desc);
 
 create table if not exists public.form_submissions (
   id uuid primary key default gen_random_uuid(),
@@ -48,15 +68,18 @@ create index if not exists site_content_public_idx on public.site_content(conten
 alter table public.admin_users enable row level security;
 alter table public.form_submissions enable row level security;
 alter table public.site_content enable row level security;
+alter table public.admin_audit_logs enable row level security;
 
 -- No direct anonymous/authenticated table access. All operations pass through
 -- server-side API handlers that validate the user's active admin_users record.
 revoke all on public.admin_users from anon, authenticated;
 revoke all on public.form_submissions from anon, authenticated;
 revoke all on public.site_content from anon, authenticated;
+revoke all on public.admin_audit_logs from anon, authenticated;
 grant all on public.admin_users to service_role;
 grant all on public.form_submissions to service_role;
 grant all on public.site_content to service_role;
+grant all on public.admin_audit_logs to service_role;
 
 -- After creating an auth user in Supabase Auth, add an administrator record:
 -- insert into public.admin_users (id, role, active)
@@ -65,7 +88,11 @@ grant all on public.site_content to service_role;
 -- Recommended role use:
 -- super_admin: all content and private submission management
 -- editor: public website content only
--- pastoral: pastoral submissions (extend API permission checks before use)
+-- area_pastor / pastoral / pastoral_support: private pastoral submissions
+-- content_admin: general public content
+-- media_admin: sermons and gallery only
+-- event_admin: events only
+-- The server API enforces the relevant permissions and records write actions.
 --
 -- IMPORTANT: Restrict /api/admin private submission actions to super_admin
 -- or pastoral roles before adding more pastoral users. The starter API is
