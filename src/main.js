@@ -351,6 +351,47 @@ const pageTitles = {
 '/privacy':'Privacy Notice | Balm of Galid','/admin':'Website Administration | Balm of Galid'
 };
 
+const pageDescriptions = {
+  '/':'Balm of Galid is an RCCG Area Church in Ogijo, Ogun State. Worship with us on Sunday at 8:00 AM, join Digging Deep and Faith Clinic, and connect with a welcoming church family.',
+  '/about':'Learn about Balm of Galid, its Christian purpose, values and place within The Redeemed Christian Church of God, Region 64, Lagos Province 62 and Alpha Zone.',
+  '/leadership':'Meet the leadership of Balm of Galid RCCG Area Church, including Area Pastor Pastor Ajetunmobi Adegbola.',
+  '/ministries':'Explore ministry and fellowship opportunities at Balm of Galid RCCG Area Church in Ogijo, Ogun State.',
+  '/services':'View Sunday Celebration, Tuesday Digging Deep, Thursday Faith Clinic and monthly programme information at Balm of Galid.',
+  '/events':'Find confirmed events and programmes from Balm of Galid RCCG Area Church.',
+  '/sermons':'Explore approved sermons, Bible teaching and media from Balm of Galid RCCG Area Church.',
+  '/prayer':'Share a private prayer request or ask for pastoral support from Balm of Galid RCCG Area Church.',
+  '/testimonies':'Read approved testimonies and share your story with Balm of Galid RCCG Area Church.',
+  '/gallery':'Explore approved photographs of worship, fellowship, ministries and outreach at Balm of Galid.',
+  '/give':'Learn about giving at Balm of Galid. Secure giving channels will appear only after official church verification.',
+  '/visit':'Plan your visit to Balm of Galid RCCG Area Church at 19, First Avenue, Oshodi Oke, Jigaye Community, Ogijo, Ogun State, Nigeria.',
+  '/house-fellowship':'Discover House Fellowship at Balm of Galid RCCG Area Church.',
+  '/news':'Read verified news and announcements from Balm of Galid RCCG Area Church.',
+  '/contact':'Contact Balm of Galid RCCG Area Church in Ogijo, Ogun State, Nigeria.',
+  '/privacy':'Read the privacy notice for the Balm of Galid RCCG Area Church website.',
+  '/admin':'Secure administration sign-in for authorised Balm of Galid RCCG Area Church website administrators.'
+};
+
+function applyPageMetadata(path) {
+  const title=pageTitles[path] || (path.startsWith('/ministries/')?'Ministry | Balm of Galid':'Balm of Galid | RCCG Area Church');
+  const description=pageDescriptions[path] || 'Discover Balm of Galid RCCG Area Church in Ogijo, Ogun State, Nigeria.';
+  document.title=title;
+  const setMeta=(selector,attribute,value)=>{
+    let node=document.querySelector(selector);
+    if(!node){node=document.createElement('meta');document.head.appendChild(node);}
+    node.setAttribute(attribute,value);
+  };
+  setMeta('meta[name="description"]','content',description);
+  setMeta('meta[property="og:title"]','content',title);
+  setMeta('meta[property="og:description"]','content',description);
+  setMeta('meta[property="og:type"]','content','website');
+  const canonical=document.querySelector('link[rel="canonical"]') || document.head.appendChild(document.createElement('link'));
+  canonical.setAttribute('rel','canonical');
+  canonical.setAttribute('href',new URL(path,window.location.origin).href);
+  setMeta('meta[name="twitter:card"]','content','summary_large_image');
+  setMeta('meta[name="twitter:title"]','content',title);
+  setMeta('meta[name="twitter:description"]','content',description);
+}
+
 function render() {
  const path=decodeURIComponent(location.pathname.replace(/\/$/,'')||'/');
  let content='';
@@ -373,7 +414,7 @@ function render() {
  else if(path==='/privacy') content=privacyPage();
  else if(path==='/admin') content=adminPage();
  else content=notFoundPage();
- document.title=pageTitles[path] || (path.startsWith('/ministries/')?'Ministry | Balm of Galid':'Balm of Galid | RCCG Area Church');
+ applyPageMetadata(path);
  document.getElementById('app').innerHTML=header()+`<main id="mainContent">${content}</main>`+footer();
  bindUI();
  if(path==='/events'||path==='/') loadContent('events',path==='/'?'homeEvents':'eventsList');
