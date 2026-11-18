@@ -8,13 +8,14 @@ module.exports = async function handler(req,res) {
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
     if(clean(body.website,200)) return res.status(200).json({ok:true});
+    if(body.consent!=='on' && body.consent!==true) return res.status(400).json({error:'Please confirm the privacy notice before submitting.'});
     const type=clean(body.type,40);
     if(!allowed.has(type)) return res.status(400).json({error:'Invalid submission type.'});
     const name=clean(body.full_name,120);
     const email=clean(body.email,180);
     const phone=clean(body.phone,40);
     const message=clean(body.message,4000);
-    if(['prayer_request','counselling','visitor','event_registration','testimony','contact'].includes(type) && !name)
+    if(['visitor','event_registration','contact'].includes(type) && !name)
       return res.status(400).json({error:'Please provide your name.'});
     if(['prayer_request','counselling','testimony','contact'].includes(type) && message.length < 3)
       return res.status(400).json({error:'Please add a little more detail to your message.'});
