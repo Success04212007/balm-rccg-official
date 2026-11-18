@@ -57,8 +57,10 @@ module.exports=async function handler(req,res) {
   }
   const contentActions=['list_content','save_content','delete_content'];
   const privateActions=['list_submissions','update_submission_status'];
-  if(contentActions.includes(body.action) && !canManage(role,String(body.content_type||body.type||'')))
-    return res.status(403).json({error:'Your role does not permit website content management.'});
+  if(['list_content','save_content'].includes(body.action) && !canManage(role,String(body.content_type||body.type||'')))
+    return res.status(403).json({error:'Your role does not permit this content type.'});
+  if(body.action==='delete_content' && !['super_admin','editor','content_admin','media_admin','event_admin'].includes(role))
+    return res.status(403).json({error:'Your role does not permit website content deletion.'});
   if(privateActions.includes(body.action) && !canViewPrivate(role))
     return res.status(403).json({error:'Your role does not permit access to private pastoral submissions.'});
   if(body.action==='list_content') {
