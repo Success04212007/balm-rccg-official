@@ -499,17 +499,35 @@ async function submitForm(event) {
 function cardFromContent(item, type, index=0) {
  const title=escapeHTML(item.title||'Untitled');
  const summary=escapeHTML(item.summary||item.data?.summary||'');
+ const data=item.data||{};
  const date=item.starts_at?new Date(item.starts_at).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}):'Details to be announced';
  const slug=encodeURIComponent(item.slug||item.id);
+ const image=safeHttpsUrl(data.image_url||data.cover_image_url||data.thumbnail_url);
  if(type==='gallery') {
-  const image=safeHttpsUrl(item.data?.image_url||item.data?.url||item.data?.photo_url);
-  if(!image)return '';
-  const caption=escapeHTML(item.data?.caption||item.summary||item.title||'Balm of Galid church photograph');
-  return `<button type="button" class="gallery-photo-card" data-gallery-open="${index}" aria-label="View photograph: ${caption}"><img src="${escapeHTML(image)}" alt="${caption}" loading="lazy"><span>${caption}</span></button>`;
+  const galleryImage=safeHttpsUrl(data.image_url||data.url||data.photo_url);
+  if(!galleryImage)return '';
+  const caption=escapeHTML(data.caption||item.summary||item.title||'Balm of Galid church photograph');
+  return `<button type="button" class="gallery-photo-card" data-gallery-open="${index}" aria-label="View photograph: ${caption}"><img src="${escapeHTML(galleryImage)}" alt="${caption}" loading="lazy"><span>${caption}</span></button>`;
+ }
+ if(type==='service_schedules') {
+  const day=escapeHTML(data.day||data.frequency||'See programme details');
+  const time=escapeHTML(data.time||'Time to be confirmed');
+  return `<article class="schedule-row"><span class="schedule-index">•</span><div><h3>${title}</h3><p>${summary}</p></div><div class="schedule-meta"><strong>${day}</strong><span>${time}</span></div></article>`;
+ }
+ if(type==='house_fellowships') {
+  return `<article class="content-card directory-card"><span class="card-kicker">HOUSE FELLOWSHIP</span><h3>${title}</h3><p>${summary}</p>${data.location?`<p><strong>Location:</strong> ${escapeHTML(data.location)}</p>`:''}${data.meeting_day?`<p><strong>Meeting:</strong> ${escapeHTML(data.meeting_day)} ${escapeHTML(data.meeting_time||'')}</p>`:''}${data.contact?`<p><strong>Contact:</strong> ${escapeHTML(data.contact)}</p>`:''}</article>`;
+ }
+ if(type==='testimonies') {
+  const name=data.display_name_consent===true&&data.contributor_name?escapeHTML(data.contributor_name):'';
+  return `<article class="content-card testimony-content-card"><span class="card-kicker">APPROVED TESTIMONY</span><h3>${title}</h3><p>${summary}</p>${name?`<span class="testimony-attribution">${name}</span>`:''}</article>`;
+ }
+ if(type==='ministries'||type==='leadership') {
+  const href=type==='ministries'?'/ministries/'+slug:'/leadership/'+slug;
+  const role=escapeHTML(data.role||data.designation||data.position||'');
+  return `<a class="content-card content-card-link directory-profile-card" href="${href}" data-link>${image?`<img class="content-card-image" src="${escapeHTML(image)}" alt="" loading="lazy">`:''}<span class="card-kicker">${type==='ministries'?'ACTIVE MINISTRY':'CHURCH LEADERSHIP'}</span><h3>${title}</h3>${role?`<span class="profile-designation">${role}</span>`:''}<p>${summary}</p><span class="status-pill">VIEW PROFILE ↗</span></a>`;
  }
  const href=type==='events'?'/events/'+slug:type==='sermons'?'/sermons/'+slug:'/news/'+slug;
  const category=type==='events'?'CHURCH EVENT':type==='sermons'?'SERMON':'CHURCH UPDATE';
- const image=safeHttpsUrl(item.data?.image_url||item.data?.cover_image_url||item.data?.thumbnail_url);
  return `<a class="content-card content-card-link" href="${href}" data-link>${image?`<img class="content-card-image" src="${escapeHTML(image)}" alt="" loading="lazy">`:''}<span class="card-kicker">${category} · ${date}</span><h3>${title}</h3><p>${summary}</p><span class="status-pill">VIEW DETAILS ↗</span></a>`;
 }
 
