@@ -71,7 +71,10 @@ module.exports=async function handler(req,res) {
   if(body.action==='save_content') {
    const type=String(body.content_type||'');if(!allowedTypes.has(type))return res.status(400).json({error:'Invalid content type.'});
    const title=String(body.title||'').trim().slice(0,180);if(!title)return res.status(400).json({error:'A title is required.'});
-   const record={content_type:type,title,slug:String(body.slug||title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')).slice(0,180),summary:String(body.summary||'').slice(0,600),body:String(body.body||'').slice(0,10000),data:body.data&&typeof body.data==='object'?body.data:{},published:body.published===true,updated_at:new Date().toISOString()};
+   const startValue=String(body.starts_at||'').trim();
+   const startDate=startValue?new Date(startValue):null;
+   if(startValue&&(!startDate||Number.isNaN(startDate.getTime())))return res.status(400).json({error:'Please provide a valid start date and time.'});
+   const record={content_type:type,title,slug:String(body.slug||title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')).slice(0,180),summary:String(body.summary||'').slice(0,600),body:String(body.body||'').slice(0,10000),data:body.data&&typeof body.data==='object'?body.data:{},published:body.published===true,starts_at:startDate?startDate.toISOString():null,updated_at:new Date().toISOString()};
    if(body.id) {
     const existing=await db(cfg,'site_content?id=eq.'+encodeURIComponent(String(body.id))+'&select=id,content_type');
     if(!existing.length)return res.status(404).json({error:'Content item not found.'});
