@@ -565,7 +565,9 @@ async function loadSingleContent(type, slug, targetId, kind) {
   let media='';
   if(kind==='sermon') {
    const youtube=youtubeEmbed(data.youtube_url||data.video_url);
-   const directVideo=safeHttpsUrl(data.mp4_url||data.video_file_url);
+   const videoCandidate=data.mp4_url||data.video_file_url||data.video_url||'';
+   const videoUrl=safeHttpsUrl(videoCandidate);
+   const directVideo=videoUrl&&/\.(mp4|webm|ogg)(?:$|[?#])/i.test(videoUrl)?videoUrl:'';
    const audio=safeHttpsUrl(data.audio_url||data.audio_file_url);
    if(youtube)media=`<div class="detail-video-frame"><iframe src="${escapeHTML(youtube)}" title="${title}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`;
    else if(directVideo)media=`<video class="detail-video" controls preload="metadata" src="${escapeHTML(directVideo)}">Your browser does not support the video element.</video>`;
@@ -738,7 +740,7 @@ function bindAdminSubmissions(mount) {
   try{
    const result=await adminRequest({action:'list_submissions',type:select.value});
    if(!result.items?.length){rows.innerHTML='<p class="muted">No submissions found for this filter.</p>';return;}
-   rows.innerHTML=result.items.map(item=>`<article class="admin-private-record"><div class="admin-private-heading"><strong>${escapeHTML(item.submission_type)}</strong><span>${escapeHTML(item.created_at||'')}</span></div><p><b>${escapeHTML(item.full_name||'Name not provided')}</b> · ${escapeHTML(item.email||item.phone||'No contact details')}</p><p class="admin-private-message">${escapeHTML(item.message||'No message text')}</p><div class="admin-private-controls"><label>Status<select data-private-status="${escapeHTML(item.id)}"><option value="new" ${item.status==='new'?'selected':''}>New</option><option value="in_review" ${item.status==='in_review'?'selected':''}>Under review</option><option value="responded" ${item.status==='responded'?'selected':''}>Responded</option><option value="closed" ${item.status==='closed'?'selected':''}>Closed</option></select></label><button type="button" class="btn btn-outline-dark" data-update-private="${escapeHTML(item.id)}">Update status</button></div></article>`).join('');
+   rows.innerHTML=result.items.map(item=>`<article class="admin-private-record"><div class="admin-private-heading"><strong>${escapeHTML(item.submission_type)}</strong><span>${escapeHTML(item.created_at||'')}</span></div><p><b>${escapeHTML(item.full_name||'Name not provided')}</b> · ${escapeHTML(item.email||item.phone||'No contact details')}</p><p class="admin-private-message">${escapeHTML(item.message||'No message text')}</p>${item.submission_type==='testimony'?'<p class="admin-consent-status">Name display consent: '+(item.payload?.display_name==='on'?'Granted':'Not granted')+'</p>':''}<div class="admin-private-controls"><label>Status<select data-private-status="${escapeHTML(item.id)}"><option value="new" ${item.status==='new'?'selected':''}>New</option><option value="in_review" ${item.status==='in_review'?'selected':''}>Under review</option><option value="responded" ${item.status==='responded'?'selected':''}>Responded</option><option value="closed" ${item.status==='closed'?'selected':''}>Closed</option></select></label><button type="button" class="btn btn-outline-dark" data-update-private="${escapeHTML(item.id)}">Update status</button></div></article>`).join('');
    rows.querySelectorAll('[data-update-private]').forEach(btn=>btn.addEventListener('click',async()=>{
     const id=btn.dataset.updatePrivate;const next=rows.querySelector('[data-private-status="'+id+'"]')?.value;if(!next)return;
     btn.disabled=true;
