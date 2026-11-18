@@ -1,5 +1,6 @@
 const allowedTypes=new Set(['events','sermons','announcements','ministries','testimonies','house_fellowships','leadership','service_schedules','gallery']);
 const canViewPrivate=(role)=>['super_admin','area_pastor','pastoral','pastoral_support'].includes(role);
+const canApproveContent=(role)=>['super_admin','area_pastor'].includes(role);
 const canManage=(role,type)=>['super_admin','editor','content_admin'].includes(role)||(role==='media_admin'&&['sermons','gallery'].includes(type))||(role==='event_admin'&&type==='events');
 const supa=()=>({url:(process.env.SUPABASE_URL||'').replace(/\/$/,''),anon:process.env.SUPABASE_ANON_KEY,service:process.env.SUPABASE_SERVICE_ROLE_KEY});
 async function authUser(token,cfg) {
@@ -50,13 +51,28 @@ module.exports=async function handler(req,res) {
    ]);
    return res.status(200).json({
     user:{email:user.email},role,
-    permissions:{content:['super_admin','editor','content_admin','media_admin','event_admin'].includes(role),private_submissions:canViewPrivateSubmissions},
+    permissions:{content:['super_admin','editor','content_admin','media_admin','event_admin'].includes(role),private_submissions:canViewPrivateSubmissions,content_approval:canApproveContent(role)},
     counts:{content:content.length,new_submissions:canViewPrivateSubmissions?submissions.filter(x=>x.status==='new').length:null,events:events.length,sermons:sermons.length},
     recent_submissions:submissions
    });
   }
   const contentActions=['list_content','save_content','delete_content'];
   const privateActions=['list_submissions','update_submission_status'];
+  const approvalActions=['list_review_content','approve_content'];
+  if(approvalActions.includes(body.action) && !canApproveContent(role))
+    return res.status(403).json({error:'Your role does not permit content approval.'});
+  if(body.action==='list_review_content') {
+   const items=await db(cfg,'site_content?published=eq.false&select=id,content_type,title,slug,summary,created_at,updated_at&order=updated_at.desc&limit=100');
+   return res.status(200).json({items});
+  }
+  if(body.action==='approve_content') {
+   const id=String(body.id||'');
+   if(!id)return res.status(400).json({error:'Content ID is required.'});
+   const result=await db(cfg,'site_content?id=eq.'+encodeURIComponent(id)+'&select=id,content_type,title,published','PATCH',{published:true,updated_at:new Date().toISOString()});
+   if(!result.length)return res.status(404).json({error:'Draft content was not found.'});
+   await audit(cfg,user.id,'content.approved',result[0].content_type,id,{role});
+   return res.status(200).json({approved:true,item:result[0]});
+  }
   if(['list_content','save_content'].includes(body.action) && !canManage(role,String(body.content_type||body.type||'')))
     return res.status(403).json({error:'Your role does not permit this content type.'});
   if(body.action==='delete_content' && !['super_admin','editor','content_admin','media_admin','event_admin'].includes(role))
