@@ -331,3 +331,9 @@
 }
 
 .admin-consent-status{font-size:9px;color:#7a6b4e;margin:7px 0;padding:8px 10px;background:#f0eee6;border-left:2px solid var(--gold)}
+
+.admin-review-row{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px 0;border-bottom:1px solid var(--line)}
+.admin-review-row h4{font:500 19px var(--serif);color:var(--forest);margin:5px 0}
+.admin-review-row p{font-size:11px;color:#6e786e;margin:4px 0}
+.admin-review-row small{font-size:9px;color:#8a9087}
+@media(max-width:680px){.admin-review-row{align-items:stretch;flex-direction:column}}
