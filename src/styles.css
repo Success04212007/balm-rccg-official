@@ -329,3 +329,5 @@
  .gallery-photo-card,.gallery-photo-card img{height:280px;max-height:320px}
  .content-card-image{width:calc(100% + 38px);margin:-24px -19px 18px}
 }
+
+.admin-consent-status{font-size:9px;color:#7a6b4e;margin:7px 0;padding:8px 10px;background:#f0eee6;border-left:2px solid var(--gold)}
