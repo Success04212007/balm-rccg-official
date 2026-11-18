@@ -755,7 +755,9 @@ function bindAdminContentManager(mount,role) {
  function editItem(item){
   form.hidden=false;field('id').value=item.id||'';field('title').value=item.title||'';field('slug').value=item.slug||'';
   field('summary').value=item.summary||'';field('body').value=item.body||'';
-  field('starts_at').value=item.starts_at?new Date(item.starts_at).toISOString().slice(0,16):'';
+  const parsedStart=item.starts_at?new Date(item.starts_at):null;
+  const localStart=parsedStart&&!Number.isNaN(parsedStart.getTime())?new Date(parsedStart.getTime()-parsedStart.getTimezoneOffset()*60000).toISOString().slice(0,16):'';
+  field('starts_at').value=localStart;
   field('data').value=JSON.stringify(item.data||{},null,2);field('published').checked=item.published===true;
   mount.querySelector('#adminContentFormTitle').textContent=item.id?'Edit content':'Create content';
   form.scrollIntoView({behavior:'smooth',block:'nearest'});
