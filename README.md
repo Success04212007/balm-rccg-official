@@ -75,8 +75,8 @@ There is no public administrator registration. Without the required environment 
 
 ## Administrator roles
 
-- `super_admin`: full content and authorised pastoral submission access.
-- `area_pastor`: access to authorised pastoral submissions; content permissions are not automatically granted.
+- `super_admin`: full content, publication approval and authorised pastoral submission access.
+- `area_pastor`: approve draft publications and access authorised pastoral submissions; general content editing is not automatically granted.
 - `pastoral` / `pastoral_support`: access to private pastoral submissions.
 - `content_admin` / `editor`: general public website content management.
 - `media_admin`: sermons and gallery records only.
@@ -88,7 +88,7 @@ The server validates permissions on each request. Private prayer and counselling
 
 The `site_content` table supports events, sermons, announcements, ministries, testimonies, house fellowships, leadership, service schedules and gallery records. Only records marked `published = true` are exposed by the public content endpoint.
 
-The website includes a role-aware content workspace and a restricted pastoral submissions workspace. The public testimony experience uses an approval workflow; submissions are not published automatically.
+The website includes a role-aware content workspace and a restricted pastoral submissions workspace. The public testimony experience uses an approval workflow; submissions are not published automatically. Published records can appear on their relevant public pages, and the Area Pastor/super administrator has a separate draft-publication approval queue.
 
 ## Confirmed information now integrated
 
@@ -122,7 +122,7 @@ Do not invent leadership biographies, service end times, events, ministry activi
 - Server-side role checks protect private submissions and content-type management.
 - Audit logging requires the current SQL schema to be applied to Supabase.
 - Card data must never be collected or stored by this website. Use an approved payment provider and verify payments server-side before enabling giving.
-- The privacy notice remains a draft for church review.
+- The privacy notice and Terms of Use remain drafts for church review.
 - No fake livestream or fake successful form submission is displayed.
 
 ## Deployment
