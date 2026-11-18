@@ -284,6 +284,16 @@ function servicesPage() {
   <section class="section-pad"><div class="container"><div class="notice-card"><strong>Church schedule</strong><p>The weekly days and times below are supplied in the church brief. The first-day monthly programme is marked pending confirmation; please contact the church office before travelling for that programme.</p></div><div class="schedule-list">${schedules.map(([title,day,time,desc],i)=>`<article class="schedule-row"><span class="schedule-index">0${i+1}</span><div><h3>${title}</h3><p>${desc}</p></div><div class="schedule-meta"><strong>${day}</strong><span>${time}</span></div></article>`).join('')}</div><div class="notice-card subtle"><strong>Additional programmes</strong><p>Holy Communion, Faith Clinic, anointing services, fasting and prayer, thanksgiving services and wider RCCG programmes will be listed only when their local schedule is confirmed.</p></div></div></section>`;
 }
 
+function contentDetailPage(kind) {
+ const config={
+  event:['EVENT DETAILS','One church family. Gathered together.','Programme information and registration details from Balm of Galid.'],
+  sermon:['MESSAGE DETAILS','Grow through the Word.','Explore this approved message from Balm of Galid.'],
+  news:['CHURCH UPDATE','News from our church family.','Read the full announcement from Balm of Galid.']
+ }[kind];
+ return `${pageHero(config[0],config[1],config[2])}
+ <section class="section-pad"><div class="container narrow-copy" id="contentDetailMount">${placeholder('Loading approved content','Please wait while this published item is retrieved.')}</div></section>`;
+}
+
 function eventsPage() {
   return `${pageHero('EVENTS & SPECIAL PROGRAMMES','Gather with purpose.','Find upcoming worship gatherings, conferences, family programmes and community activities.')}
   <section class="section-pad"><div class="container"><div class="section-heading-row">${sectionIntro('UPCOMING','Church calendar','Only confirmed programmes will appear here. Event registration will open when an organiser publishes an event.')}</div><div id="eventsList" class="content-grid three-col">${placeholder('No upcoming events published yet','When a programme is confirmed, its date, venue, registration information and details will appear here.')}</div><div class="past-events-note"><span class="eyebrow">PAST EVENTS</span><p>Approved event highlights and photographs will be added to the archive after review.</p></div></div></section>`;
@@ -306,7 +316,16 @@ function testimoniesPage() {
 
 function galleryPage() {
   return `${pageHero('GALLERY','Moments from our life together.','A visual record of worship, fellowship, service and special moments at Balm of Galid.')}
-  <section class="section-pad"><div class="container"><div class="notice-card"><strong>Official church gallery</strong><p>Church photographs have not yet been supplied. This gallery will display only images uploaded and approved by authorised church administrators, with captions and appropriate consent.</p></div><div class="gallery-categories">${['Sunday Worship','Special Services','Conferences','Youth Activities','Children’s Activities','Women’s Programmes','Men’s Programmes','Evangelism','Community Outreach','Church Celebrations'].map((x,i)=>`<div class="gallery-category"><span>0${i+1}</span><strong>${x}</strong><small>PHOTOS TO BE ADDED</small></div>`).join('')}</div></div></section>`;
+  <section class="section-pad"><div class="container">
+    <div class="notice-card"><strong>Official church gallery</strong><p>Only photographs uploaded and approved by authorised Balm of Galid administrators appear here. Select an image to view it in full size.</p></div>
+    <div id="galleryList" class="gallery-grid">${placeholder('Church photographs will appear here','Approved photographs will be added by the church media team.')}</div>
+    <dialog id="galleryLightbox" class="gallery-lightbox" aria-label="Church photograph viewer">
+      <div class="gallery-lightbox-toolbar"><span id="galleryLightboxCounter">1 / 1</span><button type="button" id="galleryLightboxClose" aria-label="Close image viewer">✕</button></div>
+      <button type="button" id="galleryLightboxPrev" class="gallery-lightbox-nav previous" aria-label="Previous photograph">‹</button>
+      <figure><img id="galleryLightboxImage" alt=""><figcaption id="galleryLightboxCaption"></figcaption></figure>
+      <button type="button" id="galleryLightboxNext" class="gallery-lightbox-nav next" aria-label="Next photograph">›</button>
+    </dialog>
+  </div></section>`;
 }
 
 function givePage() {
@@ -406,7 +425,10 @@ function render() {
  else if(path.startsWith('/ministries/')) content=ministryDetail(path.split('/').pop());
  else if(path==='/services') content=servicesPage();
  else if(path==='/events') content=eventsPage();
+ else if(path.startsWith('/events/')) content=contentDetailPage('event');
  else if(path==='/sermons') content=sermonsPage();
+ else if(path.startsWith('/sermons/')) content=contentDetailPage('sermon');
+ else if(path.startsWith('/news/')) content=contentDetailPage('news');
  else if(path==='/prayer') content=prayerPage();
  else if(path==='/testimonies') content=testimoniesPage();
  else if(path==='/gallery') content=galleryPage();
@@ -424,6 +446,10 @@ function render() {
  if(path==='/events'||path==='/') loadContent('events',path==='/'?'homeEvents':'eventsList');
  if(path==='/sermons') loadContent('sermons','sermonsList');
  if(path==='/news') loadContent('announcements','newsList');
+ if(path==='/gallery') loadContent('gallery','galleryList');
+ if(path.startsWith('/events/')) loadSingleContent('events',path.split('/').pop(),'contentDetailMount','event');
+ if(path.startsWith('/sermons/')) loadSingleContent('sermons',path.split('/').pop(),'contentDetailMount','sermon');
+ if(path.startsWith('/news/')) loadSingleContent('announcements',path.split('/').pop(),'contentDetailMount','news');
  if(path==='/admin') bindAdmin();
  window.scrollTo({top:0,behavior:'instant'});
 }
@@ -460,12 +486,40 @@ async function submitForm(event) {
  } finally {btn.disabled=false;btn.innerHTML='Send securely <span>'+icon('arrow')+'</span>';}
 }
 
-function cardFromContent(item, type) {
+function cardFromContent(item, type, index=0) {
  const title=escapeHTML(item.title||'Untitled');
  const summary=escapeHTML(item.summary||item.data?.summary||'');
  const date=item.starts_at?new Date(item.starts_at).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}):'Details to be announced';
- const href=type==='events'?'/events/'+encodeURIComponent(item.slug||item.id):type==='sermons'?'/sermons/'+encodeURIComponent(item.slug||item.id):'/news/'+encodeURIComponent(item.slug||item.id);
- return `<article class="content-card"><span class="card-kicker">${type==='events'?'CHURCH EVENT':type==='sermons'?'SERMON':'CHURCH UPDATE'} · ${date}</span><h3>${title}</h3><p>${summary}</p><span class="status-pill">PUBLISHED</span></article>`;
+ const slug=encodeURIComponent(item.slug||item.id);
+ if(type==='gallery') {
+  const image=safeHttpsUrl(item.data?.image_url||item.data?.url||item.data?.photo_url);
+  if(!image)return '';
+  const caption=escapeHTML(item.data?.caption||item.summary||item.title||'Balm of Galid church photograph');
+  return \`<button type="button" class="gallery-photo-card" data-gallery-open="\${index}" aria-label="View photograph: \${caption}"><img src="\${escapeHTML(image)}" alt="\${caption}" loading="lazy"><span>\${caption}</span></button>\`;
+ }
+ const href=type==='events'?'/events/'+slug:type==='sermons'?'/sermons/'+slug:'/news/'+slug;
+ const category=type==='events'?'CHURCH EVENT':type==='sermons'?'SERMON':'CHURCH UPDATE';
+ const image=safeHttpsUrl(item.data?.image_url||item.data?.cover_image_url||item.data?.thumbnail_url);
+ return \`<a class="content-card content-card-link" href="\${href}" data-link>\${image?\`<img class="content-card-image" src="\${escapeHTML(image)}" alt="" loading="lazy">\`:''}<span class="card-kicker">\${category} · \${date}</span><h3>\${title}</h3><p>\${summary}</p><span class="status-pill">VIEW DETAILS ↗</span></a>\`;
+}
+
+function safeHttpsUrl(value) {
+ try {
+  const url=new URL(String(value||''));
+  return url.protocol==='https:'?url.href:'';
+ } catch(_){return '';}
+}
+
+function youtubeEmbed(value) {
+ try {
+  const url=new URL(String(value||''));
+  let id='';
+  if(url.hostname==='youtu.be') id=url.pathname.slice(1);
+  else if(['youtube.com','www.youtube.com','m.youtube.com'].includes(url.hostname)) {
+   id=url.searchParams.get('v')||url.pathname.match(/\/embed\/([^/]+)/)?.[1]||url.pathname.match(/\/shorts\/([^/]+)/)?.[1]||'';
+  }
+  return /^[A-Za-z0-9_-]{11}$/.test(id)?'https://www.youtube-nocookie.com/embed/'+id:'';
+ } catch(_){return '';}
 }
 
 async function loadContent(type, targetId) {
@@ -475,8 +529,97 @@ async function loadContent(type, targetId) {
   if(!res.ok) throw new Error('not available');
   const json=await res.json();
   if(json.configured===false||!json.items?.length) return;
-  target.innerHTML=json.items.map(item=>cardFromContent(item,type)).join('');
+  if(type==='gallery') {
+   const items=json.items.filter(item=>safeHttpsUrl(item.data?.image_url||item.data?.url||item.data?.photo_url));
+   if(!items.length)return;
+   window.__balmGalleryItems=items;
+   target.innerHTML=items.map((item,index)=>cardFromContent(item,type,index)).join('');
+   target.querySelectorAll('[data-gallery-open]').forEach(button=>button.addEventListener('click',()=>openGalleryImage(Number(button.dataset.galleryOpen))));
+   bindGalleryLightbox();
+  } else {
+   target.innerHTML=json.items.map(item=>cardFromContent(item,type)).join('');
+   bindDynamicLinks(target);
+  }
  }catch(_){/* The intentional empty state remains visible when no approved public content is configured. */}
+}
+
+function bindDynamicLinks(root) {
+ root.querySelectorAll('a[data-link]').forEach(a=>a.addEventListener('click',e=>{
+  const url=new URL(a.href,location.origin);
+  if(url.origin===location.origin){e.preventDefault();history.pushState({},'',url.pathname);closeMobile();render();}
+ }));
+}
+
+async function loadSingleContent(type, slug, targetId, kind) {
+ const target=document.getElementById(targetId);if(!target)return;
+ try {
+  const res=await fetch('/api/content?type='+encodeURIComponent(type)+'&slug='+encodeURIComponent(slug));
+  const json=await res.json();
+  if(!res.ok||json.configured===false||!json.items?.length)throw new Error('not found');
+  const item=json.items[0],data=item.data||{};
+  const title=escapeHTML(item.title||'');
+  const summary=escapeHTML(item.summary||'');
+  const body=escapeHTML(item.body||'').replace(/\r?\n/g,'<br>');
+  const image=safeHttpsUrl(data.image_url||data.cover_image_url||data.banner_url||data.thumbnail_url);
+  const date=item.starts_at?new Date(item.starts_at).toLocaleString(undefined,{weekday:'long',day:'numeric',month:'long',year:'numeric',hour:'numeric',minute:'2-digit'}):'Date to be announced';
+  let media='';
+  if(kind==='sermon') {
+   const youtube=youtubeEmbed(data.youtube_url||data.video_url);
+   const directVideo=safeHttpsUrl(data.mp4_url||data.video_file_url);
+   const audio=safeHttpsUrl(data.audio_url||data.audio_file_url);
+   if(youtube)media=\`<div class="detail-video-frame"><iframe src="\${escapeHTML(youtube)}" title="\${title}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>\`;
+   else if(directVideo)media=\`<video class="detail-video" controls preload="metadata" src="\${escapeHTML(directVideo)}">Your browser does not support the video element.</video>\`;
+   if(audio)media+=\`<div class="detail-audio"><span class="eyebrow">LISTEN TO THIS MESSAGE</span><audio controls preload="none" src="\${escapeHTML(audio)}">Your browser does not support the audio element.</audio></div>\`;
+  }
+  let registration='';
+  if(kind==='event'&&data.registration_enabled===true) {
+   const fields=\`<input type="hidden" name="event_slug" value="\${escapeHTML(item.slug||slug)}"><input type="hidden" name="event_title" value="\${title}"><div class="field-row"><label>Full name<input name="full_name" required maxlength="120" autocomplete="name"></label><label>Email address<input name="email" type="email" maxlength="180" autocomplete="email"></label></div><div class="field-row"><label>Phone number<input name="phone" required maxlength="40" autocomplete="tel"></label><label>Number attending<input name="attendee_count" type="number" min="1" max="20" value="1" required></label></div><label>Additional note <span class="optional">(optional)</span><textarea name="message" rows="3" maxlength="1000"></textarea></label>\`;
+   registration=\`<div class="detail-registration">\${formShell('event_registration','Register your interest','Complete this form to register for the programme.',fields)}</div>\`;
+  } else if(kind==='event') {
+   registration='<div class="notice-card subtle"><strong>Registration information</strong><p>Online registration is not currently open for this event. Please follow the event announcement for further details.</p></div>';
+  }
+  target.innerHTML=\`<article class="published-detail">\${image?\`<img class="published-detail-image" src="\${escapeHTML(image)}" alt="\${title}">\`:''}<span class="eyebrow">\${kind==='event'?'CHURCH EVENT':kind==='sermon'?'SERMON & MEDIA':'CHURCH ANNOUNCEMENT'}</span><h1>\${title}</h1>\${summary?\`<p class="published-detail-summary">\${summary}</p>\`:''}<div class="published-detail-meta">\${kind==='event'?'DATE & TIME':kind==='sermon'?'MESSAGE DATE':'PUBLISHED'} <strong>\${date}</strong>\${data.venue?\`<span>VENUE <strong>\${escapeHTML(data.venue)}</strong></span>\`:''}\${data.preacher?\`<span>PREACHER <strong>\${escapeHTML(data.preacher)}</strong></span>\`:''}\${data.scripture_reference?\`<span>SCRIPTURE <strong>\${escapeHTML(data.scripture_reference)}</strong></span>\`:''}</div>\${media}\${body?\`<div class="published-detail-body">\${body}</div>\`:''}\${registration}<div class="detail-back-link"><a href="\${kind==='event'?'/events':kind==='sermon'?'/sermons':'/news'}" data-link>← Back to \${kind==='event'?'events':kind==='sermon'?'media centre':'news'}</a></div></article>\`;
+  bindDynamicLinks(target);
+  target.querySelectorAll('[data-submit-form]').forEach(form=>form.addEventListener('submit',submitForm));
+ }catch(_){
+  target.innerHTML=placeholder('This item is unavailable','It may have been unpublished or the link may have changed.')+'<div class="detail-back-link"><a href="'+(kind==='event'?'/events':kind==='sermon'?'/sermons':'/news')+'" data-link>← Back</a></div>';
+  bindDynamicLinks(target);
+ }
+}
+
+function bindGalleryLightbox() {
+ const dialog=document.getElementById('galleryLightbox');if(!dialog||dialog.dataset.bound)return;
+ dialog.dataset.bound='true';
+ const close=()=>{if(typeof dialog.close==='function')dialog.close();else dialog.removeAttribute('open');};
+ dialog.querySelector('#galleryLightboxClose').addEventListener('click',close);
+ dialog.querySelector('#galleryLightboxPrev').addEventListener('click',()=>openGalleryImage((window.__balmGalleryIndex||0)-1));
+ dialog.querySelector('#galleryLightboxNext').addEventListener('click',()=>openGalleryImage((window.__balmGalleryIndex||0)+1));
+ dialog.addEventListener('click',e=>{if(e.target===dialog)close();});
+ document.addEventListener('keydown',e=>{
+  if(!dialog.open)return;
+  if(e.key==='ArrowLeft')openGalleryImage((window.__balmGalleryIndex||0)-1);
+  if(e.key==='ArrowRight')openGalleryImage((window.__balmGalleryIndex||0)+1);
+ });
+ let touchStart=0;
+ dialog.addEventListener('touchstart',e=>{touchStart=e.changedTouches[0]?.clientX||0;},{passive:true});
+ dialog.addEventListener('touchend',e=>{
+  const end=e.changedTouches[0]?.clientX||0,delta=end-touchStart;
+  if(Math.abs(delta)>55)openGalleryImage((window.__balmGalleryIndex||0)+(delta<0?1:-1));
+ },{passive:true});
+}
+
+function openGalleryImage(index) {
+ const items=window.__balmGalleryItems||[];
+ if(!items.length)return;
+ const normalised=(index%items.length+items.length)%items.length;
+ window.__balmGalleryIndex=normalised;
+ const item=items[normalised],data=item.data||{},image=safeHttpsUrl(data.image_url||data.url||data.photo_url);
+ const dialog=document.getElementById('galleryLightbox');if(!dialog||!image)return;
+ const img=dialog.querySelector('#galleryLightboxImage');
+ img.src=image;img.alt=item.title||'Balm of Galid church photograph';
+ dialog.querySelector('#galleryLightboxCaption').textContent=data.caption||item.summary||item.title||'';
+ dialog.querySelector('#galleryLightboxCounter').textContent=(normalised+1)+' / '+items.length;
+ if(!dialog.open){if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');}
 }
 
 function bindAdmin() {
