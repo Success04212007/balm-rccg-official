@@ -424,7 +424,7 @@ function render() {
  else if(path==='/about') content=aboutPage();
  else if(path==='/leadership') content=leadershipPage();
  else if(path==='/ministries') content=ministriesPage();
- else if(path.startsWith('/ministries/')) { const slug=path.split('/').pop();content=departments.some(item=>item[2]===slug)?ministryDetail(slug):contentDetailPage('ministry'); }
+ else if(path.startsWith('/ministries/')) content=contentDetailPage('ministry');
  else if(path.startsWith('/leadership/')) content=contentDetailPage('leader');
  else if(path==='/services') content=servicesPage();
  else if(path==='/events') content=eventsPage();
@@ -455,7 +455,7 @@ function render() {
  if(path==='/services') loadContent('service_schedules','serviceScheduleList');
  if(path==='/testimonies') loadContent('testimonies','publishedTestimonies');
  if(path==='/house-fellowship') loadContent('house_fellowships','fellowshipDirectory');
- if(path.startsWith('/ministries/')&&!departments.some(item=>item[2]===path.split('/').pop())) loadSingleContent('ministries',path.split('/').pop(),'contentDetailMount','ministry');
+ if(path.startsWith('/ministries/')) loadSingleContent('ministries',path.split('/').pop(),'contentDetailMount','ministry');
  if(path.startsWith('/leadership/')) loadSingleContent('leadership',path.split('/').pop(),'contentDetailMount','leader');
  if(path.startsWith('/events/')) loadSingleContent('events',path.split('/').pop(),'contentDetailMount','event');
  if(path.startsWith('/sermons/')) loadSingleContent('sermons',path.split('/').pop(),'contentDetailMount','sermon');
@@ -616,7 +616,15 @@ async function loadSingleContent(type, slug, targetId, kind) {
   bindDynamicLinks(target);
   target.querySelectorAll('[data-submit-form]').forEach(form=>form.addEventListener('submit',submitForm));
  }catch(_){
-  target.innerHTML=placeholder('This item is unavailable','It may have been unpublished or the link may have changed.')+'<div class="detail-back-link"><a href="'+(kind==='event'?'/events':kind==='sermon'?'/sermons':'/news')+'" data-link>← Back</a></div>';
+  if(kind==='ministry') {
+   const entry=departments.find(value=>value[2]===slug);
+   target.innerHTML=entry
+    ?`<article class="published-detail"><span class="eyebrow">MINISTRY DIRECTORY</span><h1>${escapeHTML(entry[0])}</h1><p class="published-detail-summary">${escapeHTML(entry[1])}</p><div class="notice-card"><strong>Local ministry details pending confirmation</strong><p>The active status, local leadership, activities, meeting schedule, photographs and joining arrangements must be supplied and approved by Balm of Galid.</p></div><div class="detail-back-link"><a href="/ministries" data-link>← Back to ministries</a></div></article>`
+    :placeholder('This ministry page is unavailable','It may have been unpublished or the link may have changed.');
+  } else {
+   const back=kind==='leader'?'/leadership':kind==='event'?'/events':kind==='sermon'?'/sermons':'/news';
+   target.innerHTML=placeholder('This item is unavailable','It may have been unpublished or the link may have changed.')+`<div class="detail-back-link"><a href="${back}" data-link>← Back</a></div>`;
+  }
   bindDynamicLinks(target);
  }
 }
