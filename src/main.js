@@ -108,7 +108,7 @@ function footer() {
     <div class="footer-col"><h4>Discover</h4><a href="/about" data-link>About us</a><a href="/leadership" data-link>Our leadership</a><a href="/ministries" data-link>Ministries</a><a href="/services" data-link>Services & programmes</a><a href="/events" data-link>Events</a></div>
     <div class="footer-col"><h4>Get connected</h4><a href="/sermons" data-link>Sermons & media</a><a href="/prayer" data-link>Prayer & counselling</a><a href="/testimonies" data-link>Testimonies</a><a href="/house-fellowship" data-link>House fellowship</a><a href="/give" data-link>Giving</a></div>
     <div class="footer-col"><h4>Visit & connect</h4><a href="/visit" data-link>Plan your visit</a><a href="/contact" data-link>Contact us</a><span class="muted">19, First Avenue, Oshodi Oke, Jigaye Community, Ogijo, Ogun State, Nigeria</span><span class="muted">Sunday 8:00 AM · Tuesday 6:00–7:00 PM · Thursday 6:00–7:00 PM</span></div>
-  </div><div class="footer-bottom"><span>© ${new Date().getFullYear()} Balm of Galid RCCG Area Church. All rights reserved.</span><div><a href="/privacy" data-link>Privacy notice</a><a href="/admin" data-link>Admin access</a></div></div></div></footer>`;
+  </div><div class="footer-bottom"><span>© ${new Date().getFullYear()} Balm of Galid RCCG Area Church. All rights reserved.</span><div><a href="/privacy" data-link>Privacy notice</a><a href="/terms" data-link>Terms of use</a><a href="/admin" data-link>Admin access</a></div></div></div></footer>`;
 }
 
 function homePage() {
