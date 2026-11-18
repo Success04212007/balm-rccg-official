@@ -486,7 +486,8 @@ function bindAdmin() {
    const res=await fetch('/api/admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'sign_in',...values})});
    const data=await res.json();if(!res.ok)throw new Error(data.error||'Sign in failed.');
    sessionStorage.setItem('balmAdminToken',data.access_token);
-   showAdminDashboard(mount,data);
+   const dashboard=await adminRequest({action:'dashboard'});
+   showAdminDashboard(mount,dashboard);
   }catch(err){feedback.className='form-feedback error';feedback.textContent=err.message;}
   finally{btn.disabled=false;}
  });
@@ -499,9 +500,108 @@ async function adminRequest(body) {
  const data=await res.json();if(!res.ok)throw new Error(data.error||'Unable to complete the request.');return data;
 }
 function showAdminDashboard(mount,data) {
- mount.innerHTML=`<div class="admin-dashboard"><div class="admin-dash-top"><div><span class="eyebrow">AUTHORISED ADMINISTRATION</span><h2>Welcome to the dashboard.</h2><p>Signed in as ${escapeHTML(data.user?.email||'authorised administrator')} · ${escapeHTML(data.role||'administrator')}</p></div><button class="btn btn-outline-dark" id="adminSignOut">Sign out</button></div><div class="admin-stat-grid">${[['Content items',data.counts?.content||0],['New submissions',data.counts?.new_submissions||0],['Upcoming events',data.counts?.events||0],['Published sermons',data.counts?.sermons||0]].map(([l,v])=>`<div><span>${l}</span><strong>${v}</strong></div>`).join('')}</div><div class="admin-workspace"><div><h3>Website content</h3><p>Manage approved church updates and public content. Do not add unverified details or publish testimonies without consent.</p><button class="btn btn-dark" id="refreshAdmin">Refresh dashboard</button></div><div><h3>Recent private submissions</h3><p>Prayer requests and counselling enquiries are private. Access them only when your assigned role permits it.</p><div id="adminSubmissionList" class="admin-submissions">${(data.recent_submissions||[]).length?(data.recent_submissions||[]).map(x=>`<article><strong>${escapeHTML(x.submission_type)}</strong><span>${escapeHTML(x.created_at||'')}</span><small>${escapeHTML(x.status||'new')}</small></article>`).join(''):'No recent submissions.'}</div></div></div><p class="admin-footnote">This dashboard requires a configured Supabase project and an active administrator record. Access is validated server-side.</p></div>`;
+ const role=String(data.role||'');
+ const canManage=Boolean(data.permissions?.content);
+ const canViewPrivate=Boolean(data.permissions?.private_submissions);
+ mount.innerHTML=\`<div class="admin-dashboard">
+  <div class="admin-dash-top"><div><span class="eyebrow">AUTHORISED ADMINISTRATION</span><h2>Welcome to the dashboard.</h2><p>Signed in as \${escapeHTML(data.user?.email||'authorised administrator')} · \${escapeHTML(role||'administrator')}</p></div><button class="btn btn-outline-dark" id="adminSignOut">Sign out</button></div>
+  <div class="admin-stat-grid">
+   \${[['Content items',data.counts?.content??0],['New submissions',canViewPrivate?(data.counts?.new_submissions??0):'Restricted'],['Upcoming events',data.counts?.events??0],['Published sermons',data.counts?.sermons??0]].map(([l,v])=>\`<div><span>\${l}</span><strong>\${v}</strong></div>\`).join('')}
+  </div>
+  \${canManage?'<section class="admin-module"><div class="admin-module-heading"><div><span class="eyebrow">CONTENT WORKSPACE</span><h3>Manage website content</h3><p>Create, update, publish and remove approved website records.</p></div></div><div id="adminContentManager"></div></section>':'<section class="admin-module"><h3>Website content</h3><p>Your account does not have permission to manage public website content.</p></section>'}
+  \${canViewPrivate?'<section class="admin-module"><div class="admin-module-heading"><div><span class="eyebrow">CONFIDENTIAL PASTORAL WORKSPACE</span><h3>Private submissions</h3><p>Prayer and counselling records are restricted to authorised pastoral personnel.</p></div></div><div id="adminPrivateSubmissions"></div></section>':'<section class="admin-module"><h3>Private pastoral records</h3><p>Restricted. Your assigned role does not provide access to prayer requests or counselling submissions.</p></section>'}
+  <p class="admin-footnote">Access is checked by the server for every administrative action. Changes are recorded in the audit log.</p>
+ </div>\`;
  document.getElementById('adminSignOut')?.addEventListener('click',()=>{sessionStorage.removeItem('balmAdminToken');render();});
- document.getElementById('refreshAdmin')?.addEventListener('click',async e=>{e.currentTarget.disabled=true;try{const fresh=await adminRequest({action:'dashboard'});showAdminDashboard(mount,fresh);}catch(err){alert(err.message);} });
+ if(canManage) bindAdminContentManager(document.getElementById('adminContentManager'),role);
+ if(canViewPrivate) bindAdminSubmissions(document.getElementById('adminPrivateSubmissions'));
 }
+function bindAdminContentManager(mount,role) {
+ if(!mount)return;
+ const allTypes=[['events','Events'],['sermons','Sermons'],['announcements','Announcements'],['ministries','Ministries'],['testimonies','Testimonies'],['house_fellowships','House Fellowships'],['leadership','Leadership'],['service_schedules','Service schedules'],['gallery','Gallery']];
+ const types=role==='media_admin'?allTypes.filter(x=>['sermons','gallery'].includes(x[0])):role==='event_admin'?allTypes.filter(x=>x[0]==='events'):allTypes;
+ mount.innerHTML=\`<div class="admin-content-toolbar"><label>Content category<select id="adminContentType">\${types.map(([v,l])=>\`<option value="\${v}">\${l}</option>\`).join('')}</select></label><div><button type="button" class="btn btn-outline-dark" id="adminLoadContent">Refresh list</button><button type="button" class="btn btn-dark" id="adminNewContent">Create new</button></div></div>
+ <div id="adminContentList" class="admin-content-list"><p class="muted">Loading content…</p></div>
+ <form id="adminContentForm" class="admin-edit-form" hidden>
+  <div class="admin-form-title"><h4 id="adminContentFormTitle">Create content</h4><button type="button" class="btn btn-outline-dark" id="adminCancelEdit">Cancel</button></div>
+  <input type="hidden" name="id">
+  <label>Title<input name="title" required maxlength="180" placeholder="Content title"></label>
+  <label>URL slug<input name="slug" maxlength="180" placeholder="generated-from-title"></label>
+  <label>Summary<textarea name="summary" rows="2" maxlength="600" placeholder="Short public summary"></textarea></label>
+  <label>Main content<textarea name="body" rows="5" maxlength="10000" placeholder="Full content or description"></textarea></label>
+  <label>Additional structured information (JSON)<textarea name="data" rows="4" placeholder='{"date":"2026-12-01","venue":"Church venue"}'></textarea></label>
+  <label class="admin-publish-toggle"><input type="checkbox" name="published"><span>Publish this item</span></label>
+  <button type="submit" class="btn btn-dark">Save content</button><p class="form-feedback" aria-live="polite"></p>
+ </form>\`;
+ const typeSelect=mount.querySelector('#adminContentType');
+ const list=mount.querySelector('#adminContentList');
+ const form=mount.querySelector('#adminContentForm');
+ const feedback=form.querySelector('.form-feedback');
+ const field=name=>form.elements.namedItem(name);
+ function resetForm(){form.reset();field('id').value='';form.hidden=true;feedback.textContent='';feedback.className='form-feedback';}
+ function editItem(item){
+  form.hidden=false;field('id').value=item.id||'';field('title').value=item.title||'';field('slug').value=item.slug||'';
+  field('summary').value=item.summary||'';field('body').value=item.body||'';
+  field('data').value=JSON.stringify(item.data||{},null,2);field('published').checked=item.published===true;
+  mount.querySelector('#adminContentFormTitle').textContent=item.id?'Edit content':'Create content';
+  form.scrollIntoView({behavior:'smooth',block:'nearest'});
+ }
+ async function loadItems(){
+  list.innerHTML='<p class="muted">Loading content…</p>';
+  try{
+   const result=await adminRequest({action:'list_content',type:typeSelect.value});
+   if(!result.items?.length){list.innerHTML='<p class="muted">No records in this category yet. Use Create new to add the first item.</p>';return;}
+   list.innerHTML=result.items.map(item=>\`<article class="admin-content-row"><div><strong>\${escapeHTML(item.title)}</strong><small>/\${escapeHTML(item.slug||'')}</small><span class="status-pill">\${item.published?'PUBLISHED':'DRAFT'}</span></div><div class="admin-row-actions"><button type="button" data-edit="\${escapeHTML(item.id)}" class="btn btn-outline-dark">Edit</button><button type="button" data-delete="\${escapeHTML(item.id)}" class="btn btn-outline-dark">Delete</button></div></article>\`).join('');
+   list.querySelectorAll('[data-edit]').forEach(btn=>btn.addEventListener('click',()=>{const item=result.items.find(x=>x.id===btn.dataset.edit);if(item)editItem(item);}));
+   list.querySelectorAll('[data-delete]').forEach(btn=>btn.addEventListener('click',async()=>{
+    if(!window.confirm('Delete this content record? This cannot be undone.'))return;
+    btn.disabled=true;
+    try{await adminRequest({action:'delete_content',id:btn.dataset.delete});await loadItems();}
+    catch(err){window.alert(err.message);btn.disabled=false;}
+   }));
+  }catch(err){list.innerHTML=\`<p class="form-feedback error">\${escapeHTML(err.message)}</p>\`;}
+ }
+ mount.querySelector('#adminLoadContent').addEventListener('click',loadItems);
+ mount.querySelector('#adminNewContent').addEventListener('click',()=>editItem({data:{}}));
+ mount.querySelector('#adminCancelEdit').addEventListener('click',resetForm);
+ typeSelect.addEventListener('change',()=>{resetForm();loadItems();});
+ form.addEventListener('submit',async event=>{
+  event.preventDefault();const btn=form.querySelector('button[type="submit"]');btn.disabled=true;feedback.className='form-feedback';feedback.textContent='Saving…';
+  try{
+   const raw=field('data').value.trim();
+   const data=raw?JSON.parse(raw):{};
+   if(!data||Array.isArray(data)||typeof data!=='object')throw new Error('Additional information must be a JSON object.');
+   await adminRequest({action:'save_content',id:field('id').value||undefined,content_type:typeSelect.value,title:field('title').value,slug:field('slug').value,summary:field('summary').value,body:field('body').value,data,published:field('published').checked});
+   resetForm();await loadItems();
+   feedback.className='form-feedback success';feedback.textContent='Content saved successfully.';
+  }catch(err){feedback.className='form-feedback error';feedback.textContent=err instanceof SyntaxError?'Please enter valid JSON in the additional information field.':err.message;}
+  finally{btn.disabled=false;}
+ });
+ loadItems();
+}
+function bindAdminSubmissions(mount) {
+ if(!mount)return;
+ mount.innerHTML=\`<div class="admin-content-toolbar"><label>Submission type<select id="adminSubmissionType"><option value="">All submissions</option><option value="prayer_request">Prayer requests</option><option value="counselling">Counselling</option><option value="visitor">Visitor enquiries</option><option value="event_registration">Event registrations</option><option value="testimony">Testimonies</option><option value="contact">Contact messages</option><option value="newsletter">Newsletter</option></select></label><button type="button" class="btn btn-outline-dark" id="adminLoadSubmissions">Refresh submissions</button></div><div id="adminSubmissionRows" class="admin-submission-rows"><p class="muted">Loading private submissions…</p></div>\`;
+ const select=mount.querySelector('#adminSubmissionType');
+ const rows=mount.querySelector('#adminSubmissionRows');
+ async function load(){
+  rows.innerHTML='<p class="muted">Loading private submissions…</p>';
+  try{
+   const result=await adminRequest({action:'list_submissions',type:select.value});
+   if(!result.items?.length){rows.innerHTML='<p class="muted">No submissions found for this filter.</p>';return;}
+   rows.innerHTML=result.items.map(item=>\`<article class="admin-private-record"><div class="admin-private-heading"><strong>\${escapeHTML(item.submission_type)}</strong><span>\${escapeHTML(item.created_at||'')}</span></div><p><b>\${escapeHTML(item.full_name||'Name not provided')}</b> · \${escapeHTML(item.email||item.phone||'No contact details')}</p><p class="admin-private-message">\${escapeHTML(item.message||'No message text')}</p><div class="admin-private-controls"><label>Status<select data-private-status="\${escapeHTML(item.id)}"><option value="new" \${item.status==='new'?'selected':''}>New</option><option value="in_review" \${item.status==='in_review'?'selected':''}>Under review</option><option value="responded" \${item.status==='responded'?'selected':''}>Responded</option><option value="closed" \${item.status==='closed'?'selected':''}>Closed</option></select></label><button type="button" class="btn btn-outline-dark" data-update-private="\${escapeHTML(item.id)}">Update status</button></div></article>\`).join('');
+   rows.querySelectorAll('[data-update-private]').forEach(btn=>btn.addEventListener('click',async()=>{
+    const id=btn.dataset.updatePrivate;const next=rows.querySelector('[data-private-status="'+id+'"]')?.value;if(!next)return;
+    btn.disabled=true;
+    try{await adminRequest({action:'update_submission_status',id,status:next});btn.textContent='Updated';}
+    catch(err){window.alert(err.message);btn.disabled=false;}
+   }));
+  }catch(err){rows.innerHTML=\`<p class="form-feedback error">\${escapeHTML(err.message)}</p>\`;}
+ }
+ mount.querySelector('#adminLoadSubmissions').addEventListener('click',load);
+ select.addEventListener('change',load);
+ load();
+}
+
 
 render();
