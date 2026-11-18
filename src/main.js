@@ -691,6 +691,7 @@ async function adminRequest(body) {
 function showAdminDashboard(mount,data) {
  const role=String(data.role||'');
  const canManage=Boolean(data.permissions?.content);
+ const canApprove=Boolean(data.permissions?.content_approval);
  const canViewPrivate=Boolean(data.permissions?.private_submissions);
  mount.innerHTML=`<div class="admin-dashboard">
   <div class="admin-dash-top"><div><span class="eyebrow">AUTHORISED ADMINISTRATION</span><h2>Welcome to the dashboard.</h2><p>Signed in as ${escapeHTML(data.user?.email||'authorised administrator')} · ${escapeHTML(role||'administrator')}</p></div><button class="btn btn-outline-dark" id="adminSignOut">Sign out</button></div>
@@ -698,12 +699,34 @@ function showAdminDashboard(mount,data) {
    ${[['Content items',data.counts?.content??0],['New submissions',canViewPrivate?(data.counts?.new_submissions??0):'Restricted'],['Upcoming events',data.counts?.events??0],['Published sermons',data.counts?.sermons??0]].map(([l,v])=>`<div><span>${l}</span><strong>${v}</strong></div>`).join('')}
   </div>
   ${canManage?'<section class="admin-module"><div class="admin-module-heading"><div><span class="eyebrow">CONTENT WORKSPACE</span><h3>Manage website content</h3><p>Create, update, publish and remove approved website records.</p></div></div><div id="adminContentManager"></div></section>':'<section class="admin-module"><h3>Website content</h3><p>Your account does not have permission to manage public website content.</p></section>'}
+  ${canApprove?'<section class="admin-module"><div class="admin-module-heading"><div><span class="eyebrow">PASTORAL PUBLICATION REVIEW</span><h3>Review draft publications</h3><p>Approve drafts before they appear on public pages. Approval does not change the content itself.</p></div></div><div id="adminApprovalWorkspace"></div></section>':''}
   ${canViewPrivate?'<section class="admin-module"><div class="admin-module-heading"><div><span class="eyebrow">CONFIDENTIAL PASTORAL WORKSPACE</span><h3>Private submissions</h3><p>Prayer and counselling records are restricted to authorised pastoral personnel.</p></div></div><div id="adminPrivateSubmissions"></div></section>':'<section class="admin-module"><h3>Private pastoral records</h3><p>Restricted. Your assigned role does not provide access to prayer requests or counselling submissions.</p></section>'}
   <p class="admin-footnote">Access is checked by the server for every administrative action. Changes are recorded in the audit log.</p>
  </div>`;
  document.getElementById('adminSignOut')?.addEventListener('click',()=>{sessionStorage.removeItem('balmAdminToken');render();});
  if(canManage) bindAdminContentManager(document.getElementById('adminContentManager'),role);
+ if(canApprove) bindAdminApprovals(document.getElementById('adminApprovalWorkspace'));
  if(canViewPrivate) bindAdminSubmissions(document.getElementById('adminPrivateSubmissions'));
+}
+function bindAdminApprovals(mount) {
+ if(!mount)return;
+ mount.innerHTML=`<div class="admin-content-toolbar"><span>Unpublished content awaiting review</span><button type="button" class="btn btn-outline-dark" id="refreshApprovalQueue">Refresh drafts</button></div><div id="approvalQueue"><p class="muted">Loading drafts…</p></div>`;
+ const queue=mount.querySelector('#approvalQueue');
+ async function load(){
+  queue.innerHTML='<p class="muted">Loading drafts…</p>';
+  try{
+   const result=await adminRequest({action:'list_review_content'});
+   if(!result.items?.length){queue.innerHTML='<p class="muted">There are no drafts awaiting publication review.</p>';return;}
+   queue.innerHTML=result.items.map(item=>`<article class="admin-review-row"><div><span class="card-kicker">${escapeHTML(item.content_type)}</span><h4>${escapeHTML(item.title)}</h4><p>${escapeHTML(item.summary||'No summary supplied.')}</p><small>Updated: ${escapeHTML(item.updated_at||item.created_at||'')}</small></div><button type="button" class="btn btn-dark" data-approve-content="${escapeHTML(item.id)}">Approve publication</button></article>`).join('');
+   queue.querySelectorAll('[data-approve-content]').forEach(button=>button.addEventListener('click',async()=>{
+    button.disabled=true;button.textContent='Approving…';
+    try{await adminRequest({action:'approve_content',id:button.dataset.approveContent});await load();}
+    catch(err){window.alert(err.message);button.disabled=false;button.textContent='Approve publication';}
+   }));
+  }catch(err){queue.innerHTML=`<p class="form-feedback error">${escapeHTML(err.message)}</p>`;}
+ }
+ mount.querySelector('#refreshApprovalQueue').addEventListener('click',load);
+ load();
 }
 function bindAdminContentManager(mount,role) {
  if(!mount)return;
