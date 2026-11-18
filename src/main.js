@@ -495,12 +495,12 @@ function cardFromContent(item, type, index=0) {
   const image=safeHttpsUrl(item.data?.image_url||item.data?.url||item.data?.photo_url);
   if(!image)return '';
   const caption=escapeHTML(item.data?.caption||item.summary||item.title||'Balm of Galid church photograph');
-  return \`<button type="button" class="gallery-photo-card" data-gallery-open="\${index}" aria-label="View photograph: \${caption}"><img src="\${escapeHTML(image)}" alt="\${caption}" loading="lazy"><span>\${caption}</span></button>\`;
+  return `<button type="button" class="gallery-photo-card" data-gallery-open="${index}" aria-label="View photograph: ${caption}"><img src="${escapeHTML(image)}" alt="${caption}" loading="lazy"><span>${caption}</span></button>`;
  }
  const href=type==='events'?'/events/'+slug:type==='sermons'?'/sermons/'+slug:'/news/'+slug;
  const category=type==='events'?'CHURCH EVENT':type==='sermons'?'SERMON':'CHURCH UPDATE';
  const image=safeHttpsUrl(item.data?.image_url||item.data?.cover_image_url||item.data?.thumbnail_url);
- return \`<a class="content-card content-card-link" href="\${href}" data-link>\${image?\`<img class="content-card-image" src="\${escapeHTML(image)}" alt="" loading="lazy">\`:''}<span class="card-kicker">\${category} · \${date}</span><h3>\${title}</h3><p>\${summary}</p><span class="status-pill">VIEW DETAILS ↗</span></a>\`;
+ return `<a class="content-card content-card-link" href="${href}" data-link>${image?`<img class="content-card-image" src="${escapeHTML(image)}" alt="" loading="lazy">`:''}<span class="card-kicker">${category} · ${date}</span><h3>${title}</h3><p>${summary}</p><span class="status-pill">VIEW DETAILS ↗</span></a>`;
 }
 
 function safeHttpsUrl(value) {
@@ -567,18 +567,18 @@ async function loadSingleContent(type, slug, targetId, kind) {
    const youtube=youtubeEmbed(data.youtube_url||data.video_url);
    const directVideo=safeHttpsUrl(data.mp4_url||data.video_file_url);
    const audio=safeHttpsUrl(data.audio_url||data.audio_file_url);
-   if(youtube)media=\`<div class="detail-video-frame"><iframe src="\${escapeHTML(youtube)}" title="\${title}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>\`;
-   else if(directVideo)media=\`<video class="detail-video" controls preload="metadata" src="\${escapeHTML(directVideo)}">Your browser does not support the video element.</video>\`;
-   if(audio)media+=\`<div class="detail-audio"><span class="eyebrow">LISTEN TO THIS MESSAGE</span><audio controls preload="none" src="\${escapeHTML(audio)}">Your browser does not support the audio element.</audio></div>\`;
+   if(youtube)media=`<div class="detail-video-frame"><iframe src="${escapeHTML(youtube)}" title="${title}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`;
+   else if(directVideo)media=`<video class="detail-video" controls preload="metadata" src="${escapeHTML(directVideo)}">Your browser does not support the video element.</video>`;
+   if(audio)media+=`<div class="detail-audio"><span class="eyebrow">LISTEN TO THIS MESSAGE</span><audio controls preload="none" src="${escapeHTML(audio)}">Your browser does not support the audio element.</audio></div>`;
   }
   let registration='';
   if(kind==='event'&&data.registration_enabled===true) {
-   const fields=\`<input type="hidden" name="event_slug" value="\${escapeHTML(item.slug||slug)}"><input type="hidden" name="event_title" value="\${title}"><div class="field-row"><label>Full name<input name="full_name" required maxlength="120" autocomplete="name"></label><label>Email address<input name="email" type="email" maxlength="180" autocomplete="email"></label></div><div class="field-row"><label>Phone number<input name="phone" required maxlength="40" autocomplete="tel"></label><label>Number attending<input name="attendee_count" type="number" min="1" max="20" value="1" required></label></div><label>Additional note <span class="optional">(optional)</span><textarea name="message" rows="3" maxlength="1000"></textarea></label>\`;
-   registration=\`<div class="detail-registration">\${formShell('event_registration','Register your interest','Complete this form to register for the programme.',fields)}</div>\`;
+   const fields=`<input type="hidden" name="event_slug" value="${escapeHTML(item.slug||slug)}"><input type="hidden" name="event_title" value="${title}"><div class="field-row"><label>Full name<input name="full_name" required maxlength="120" autocomplete="name"></label><label>Email address<input name="email" type="email" maxlength="180" autocomplete="email"></label></div><div class="field-row"><label>Phone number<input name="phone" required maxlength="40" autocomplete="tel"></label><label>Number attending<input name="attendee_count" type="number" min="1" max="20" value="1" required></label></div><label>Additional note <span class="optional">(optional)</span><textarea name="message" rows="3" maxlength="1000"></textarea></label>`;
+   registration=`<div class="detail-registration">${formShell('event_registration','Register your interest','Complete this form to register for the programme.',fields)}</div>`;
   } else if(kind==='event') {
    registration='<div class="notice-card subtle"><strong>Registration information</strong><p>Online registration is not currently open for this event. Please follow the event announcement for further details.</p></div>';
   }
-  target.innerHTML=\`<article class="published-detail">\${image?\`<img class="published-detail-image" src="\${escapeHTML(image)}" alt="\${title}">\`:''}<span class="eyebrow">\${kind==='event'?'CHURCH EVENT':kind==='sermon'?'SERMON & MEDIA':'CHURCH ANNOUNCEMENT'}</span><h1>\${title}</h1>\${summary?\`<p class="published-detail-summary">\${summary}</p>\`:''}<div class="published-detail-meta">\${kind==='event'?'DATE & TIME':kind==='sermon'?'MESSAGE DATE':'PUBLISHED'} <strong>\${date}</strong>\${data.venue?\`<span>VENUE <strong>\${escapeHTML(data.venue)}</strong></span>\`:''}\${data.preacher?\`<span>PREACHER <strong>\${escapeHTML(data.preacher)}</strong></span>\`:''}\${data.scripture_reference?\`<span>SCRIPTURE <strong>\${escapeHTML(data.scripture_reference)}</strong></span>\`:''}</div>\${media}\${body?\`<div class="published-detail-body">\${body}</div>\`:''}\${registration}<div class="detail-back-link"><a href="\${kind==='event'?'/events':kind==='sermon'?'/sermons':'/news'}" data-link>← Back to \${kind==='event'?'events':kind==='sermon'?'media centre':'news'}</a></div></article>\`;
+  target.innerHTML=`<article class="published-detail">${image?`<img class="published-detail-image" src="${escapeHTML(image)}" alt="${title}">`:''}<span class="eyebrow">${kind==='event'?'CHURCH EVENT':kind==='sermon'?'SERMON & MEDIA':'CHURCH ANNOUNCEMENT'}</span><h1>${title}</h1>${summary?`<p class="published-detail-summary">${summary}</p>`:''}<div class="published-detail-meta">${kind==='event'?'DATE & TIME':kind==='sermon'?'MESSAGE DATE':'PUBLISHED'} <strong>${date}</strong>${data.venue?`<span>VENUE <strong>${escapeHTML(data.venue)}</strong></span>`:''}${data.preacher?`<span>PREACHER <strong>${escapeHTML(data.preacher)}</strong></span>`:''}${data.scripture_reference?`<span>SCRIPTURE <strong>${escapeHTML(data.scripture_reference)}</strong></span>`:''}</div>${media}${body?`<div class="published-detail-body">${body}</div>`:''}${registration}<div class="detail-back-link"><a href="${kind==='event'?'/events':kind==='sermon'?'/sermons':'/news'}" data-link>← Back to ${kind==='event'?'events':kind==='sermon'?'media centre':'news'}</a></div></article>`;
   bindDynamicLinks(target);
   target.querySelectorAll('[data-submit-form]').forEach(form=>form.addEventListener('submit',submitForm));
  }catch(_){
