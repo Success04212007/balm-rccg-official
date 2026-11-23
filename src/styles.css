@@ -337,3 +337,12 @@
 .admin-review-row p{font-size:11px;color:#6e786e;margin:4px 0}
 .admin-review-row small{font-size:9px;color:#8a9087}
 @media(max-width:680px){.admin-review-row{align-items:stretch;flex-direction:column}}
+
+
+/* Contact page verified communication actions */
+.contact-detail-list article .contact-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:10px}
+.contact-detail-list article .contact-actions a,
+.contact-detail-list article>a{display:inline-flex;align-items:center;gap:7px;width:max-content;max-width:100%;font-size:10px;font-weight:700;color:#80683e;padding:7px 10px;border:1px solid #e5ddca;background:#fbfaf6;transition:background .2s,border-color .2s,color .2s}
+.contact-detail-list article .contact-actions a:hover,
+.contact-detail-list article>a:hover{background:var(--green);border-color:var(--green);color:#fff}
+@media(max-width:680px){.contact-detail-list article .contact-actions{gap:8px}.contact-detail-list article .contact-actions a{padding:9px 11px}}
