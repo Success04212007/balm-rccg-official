@@ -130,3 +130,8 @@ Do not invent leadership biographies, service end times, events, ministry activi
 The repository is connected to the Vercel project `balm-rccg-official`. Pushes to `main` trigger Git-based deployments. Verify the deployment has reached `READY`, configure the Supabase environment variables, apply the SQL schema, and complete the outstanding church review before publicly announcing the website.
 
 Production URL: https://balm-rccg-official.vercel.app
+
+
+## RCCG emblem attribution
+
+The RCCG emblem image currently referenced by the website is `Rccg_logo.png` by Abolajiadeola via Wikimedia Commons, licensed under [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/). The image is used unmodified. This third-party Commons file is a reference asset; replace it with an official RCCG-supplied brand file if the church has an authorised master asset.
