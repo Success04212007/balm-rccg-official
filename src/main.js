@@ -577,22 +577,64 @@ function youtubeEmbed(value) {
 
 async function loadContent(type, targetId) {
  const target=document.getElementById(targetId);if(!target)return;
+ const uploadedGalleryImages = [
+  '854754730_122230773236498376_1718342642419852779_n.jpg',
+  '864479151_122230701350498376_9179382421759957845_n.jpg',
+  '866212273_122230700912498376_8267296710447568386_n.jpg',
+  '875948352_122230701440498376_7444620500269444490_n.jpg',
+  '877089644_122230701266498376_7345078818215971004_n.jpg',
+  '877628157_122230701566498376_2633819839752748814_n.jpg',
+  '878081351_122230701050498376_7242099873557054811_n.jpg',
+  '878241548_122230701608498376_1508575543739723701_n.jpg',
+  '879286996_122230700960498376_253165705280313037_n.jpg',
+  '879349105_122230703900498376_706187399115724717_n.jpg',
+  '879457163_122230701524498376_6896718544550332137_n.jpg',
+  '882421211_122230701482498376_2315542125222135268_n.jpg',
+  '883501937_122230701140498376_621529958624254257_n.jpg',
+  '884888230_122230704404498376_7157923541364470544_n.jpg',
+  '907031618_122232718976498376_5462432365109136456_n.jpg',
+  '907086621_122232719054498376_6174231756514454835_n.jpg',
+  '907643623_122232719030498376_3713494467568281150_n.jpg',
+  '909576454_122232719042498376_7821776271557641956_n.jpg',
+  '911193574_122232719096498376_6933750225903741157_n.jpg',
+  '912205315_122232718766498376_6819685674967725995_n.jpg',
+  '912545427_122232718838498376_4459530588711774260_n.jpg'
+ ];
+ const uploadedItems = uploadedGalleryImages.map((filename,index)=>({
+  id:'repo-gallery-'+filename,
+  title:'Balm of Galid — Church Gallery '+(index+1),
+  summary:'Moments from the life and fellowship of Balm of Galid.',
+  data:{image_url:'https://raw.githubusercontent.com/Success04212007/balm-rccg-official/main/'+filename,caption:'Balm of Galid — Church Gallery'}
+ }));
+ if(type==='gallery') {
+  let publishedItems=[];
+  try {
+   const res=await fetch('/api/content?type=gallery');
+   if(res.ok) {
+    const json=await res.json();
+    publishedItems=(json.items||[]).filter(item=>safeHttpsUrl(item.data?.image_url||item.data?.url||item.data?.photo_url));
+   }
+  } catch(_){/* Repository-uploaded gallery images remain available if the content service is offline. */}
+  const seen=new Set();
+  const items=[...publishedItems,...uploadedItems].filter(item=>{
+   const url=safeHttpsUrl(item.data?.image_url||item.data?.url||item.data?.photo_url);
+   if(!url||seen.has(url))return false;
+   seen.add(url);return true;
+  });
+  if(!items.length)return;
+  window.__balmGalleryItems=items;
+  target.innerHTML=items.map((item,index)=>cardFromContent(item,'gallery',index)).join('');
+  target.querySelectorAll('[data-gallery-open]').forEach(button=>button.addEventListener('click',()=>openGalleryImage(Number(button.dataset.galleryOpen))));
+  bindGalleryLightbox();
+  return;
+ }
  try{
   const res=await fetch('/api/content?type='+encodeURIComponent(type));
   if(!res.ok) throw new Error('not available');
   const json=await res.json();
-  if(json.configured===false||!json.items?.length) return;
-  if(type==='gallery') {
-   const items=json.items.filter(item=>safeHttpsUrl(item.data?.image_url||item.data?.url||item.data?.photo_url));
-   if(!items.length)return;
-   window.__balmGalleryItems=items;
-   target.innerHTML=items.map((item,index)=>cardFromContent(item,type,index)).join('');
-   target.querySelectorAll('[data-gallery-open]').forEach(button=>button.addEventListener('click',()=>openGalleryImage(Number(button.dataset.galleryOpen))));
-   bindGalleryLightbox();
-  } else {
-   target.innerHTML=json.items.map(item=>cardFromContent(item,type)).join('');
-   bindDynamicLinks(target);
-  }
+  if(json.configured===false||!json.items?.length)return;
+  target.innerHTML=json.items.map(item=>cardFromContent(item,type)).join('');
+  bindDynamicLinks(target);
  }catch(_){/* The intentional empty state remains visible when no approved public content is configured. */}
 }
 
