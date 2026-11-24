@@ -82,7 +82,7 @@ There is no public administrator registration. Without the required environment 
 - `media_admin`: sermons and gallery records only.
 - `event_admin`: event records only.
 
-The server validates permissions on each request. Private prayer and counselling records are not returned to media, event or general content roles. Content edits and deletes, and pastoral submission status changes, are written to `admin_audit_logs`.
+The server validates permissions on each request. Private prayer and counselling records are not returned to media, event or general content roles. Only `super_admin` and `area_pastor` can approve publication; other authorised content roles save requested publications as drafts for pastoral review. Content edits and deletes, approvals, and pastoral submission status changes are written to `admin_audit_logs`.
 
 ## Content workflow
 
@@ -127,7 +127,7 @@ Do not invent leadership biographies, service end times, events, ministry activi
 
 ## Deployment
 
-The repository is connected to the Vercel project `balm-rccg-official`. Pushes to `main` trigger Git-based deployments. Verify the deployment has reached `READY`, configure the Supabase environment variables, apply the SQL schema, and complete the outstanding church review before publicly announcing the website.
+The repository is connected to the Vercel project `balm-rccg-official`. Pushes to `main` trigger Git-based deployments. The Vercel configuration includes an SPA fallback rewrite so direct visits and refreshes on client-side routes resolve to `index.html`. API handlers use ES module exports to match the root `package.json` (`type: module`). Verify the deployment has reached `READY`, configure the Supabase environment variables, apply the SQL schema, and complete the outstanding church review before publicly announcing the website.
 
 Production URL: https://balm-rccg-official.vercel.app
 

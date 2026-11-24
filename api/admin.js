@@ -17,7 +17,7 @@ async function audit(cfg,actorId,action,entityType,entityId,details={}) {
   details,created_at:new Date().toISOString()
  });
 }
-module.exports=async function handler(req,res) {
+export default async function handler(req,res) {
  res.setHeader('Cache-Control','no-store');
  if(req.method!=='POST'){res.setHeader('Allow','POST');return res.status(405).json({error:'Method not allowed.'});}
  const cfg=supa();if(!cfg.url||!cfg.anon||!cfg.service)return res.status(503).json({error:'Administrator access is not configured. Ask the project administrator to complete the secure setup.'});
@@ -90,7 +90,9 @@ module.exports=async function handler(req,res) {
    const startValue=String(body.starts_at||'').trim();
    const startDate=startValue?new Date(startValue):null;
    if(startValue&&(!startDate||Number.isNaN(startDate.getTime())))return res.status(400).json({error:'Please provide a valid start date and time.'});
-   const record={content_type:type,title,slug:String(body.slug||title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')).slice(0,180),summary:String(body.summary||'').slice(0,600),body:String(body.body||'').slice(0,10000),data:body.data&&typeof body.data==='object'?body.data:{},published:body.published===true,starts_at:startDate?startDate.toISOString():null,updated_at:new Date().toISOString()};
+   const requestedPublish=body.published===true;
+   const approvedToPublish=canApproveContent(role);
+   const record={content_type:type,title,slug:String(body.slug||title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')).slice(0,180),summary:String(body.summary||'').slice(0,600),body:String(body.body||'').slice(0,10000),data:body.data&&typeof body.data==='object'&&!Array.isArray(body.data)?body.data:{},published:approvedToPublish&&requestedPublish,starts_at:startDate?startDate.toISOString():null,updated_at:new Date().toISOString()};
    if(body.id) {
     const existing=await db(cfg,'site_content?id=eq.'+encodeURIComponent(String(body.id))+'&select=id,content_type');
     if(!existing.length)return res.status(404).json({error:'Content item not found.'});
@@ -99,7 +101,7 @@ module.exports=async function handler(req,res) {
    const result=body.id?await db(cfg,'site_content?id=eq.'+encodeURIComponent(String(body.id)), 'PATCH',record):await db(cfg,'site_content','POST',{...record,created_by:user.id});
    const savedId=result[0]?.id||body.id||null;
    await audit(cfg,user.id,body.id?'content.updated':'content.created',type,savedId,{role});
-   return res.status(200).json({saved:true,item:result[0]||null});
+   return res.status(200).json({saved:true,awaiting_approval:requestedPublish&&!approvedToPublish,item:result[0]||null});
   }
   if(body.action==='delete_content') {
    const id=String(body.id||'');if(!id)return res.status(400).json({error:'Content ID is required.'});

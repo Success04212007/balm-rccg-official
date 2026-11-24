@@ -24,31 +24,12 @@ const nav = [
   ['Gallery','/gallery'], ['Give','/give'], ['Contact','/contact']
 ];
 
-const departments = [
-  ['Men’s Fellowship — RCCG Men of Valor','Encouraging men to grow in Christ, lead with integrity and serve their families and community.','men'],
-  ['Women’s Fellowship — RCCG Women of Royal Heritage','Building faith, strengthening families and creating room for meaningful Christian fellowship.','women'],
-  ['Youth Ministry','Equipping young people to know Christ, grow in purpose and influence their generation for good.','youth'],
-  ['Teens Ministry','A safe, faith-filled environment for teenagers to learn, ask questions and build godly foundations.','teens'],
-  ['Children’s Department','Helping children discover the love of Jesus through age-appropriate teaching and care.','children'],
-  ['Sunday School','Growing together through the study, understanding and practical application of God’s Word.','sunday-school'],
-  ['Prayer Ministry','Encouraging a life of prayer and standing together in faith before God.','prayer'],
-  ['Evangelism Department','Sharing the good news of Jesus Christ and serving people with compassion.','evangelism'],
-  ['Choir & Music','Supporting congregational worship through music, preparation and service.','choir'],
-  ['Ushering Department','Helping every worshipper feel welcomed, guided and cared for.','ushering'],
-  ['Protocol Department','Supporting orderly services and the care of guests and special visitors.','protocol'],
-  ['Welfare Department','Coordinating practical care and compassion for people in need.','welfare'],
-  ['Media & Technical','Supporting the communication of the Gospel through responsible media and production.','media'],
-  ['Follow-up & New Converts','Walking alongside new believers and helping people take their next steps in faith.','follow-up'],
-  ['House Fellowship','Creating smaller communities for prayer, Scripture, friendship and mutual care.','house-fellowship'],
-  ['Workers & Ministers','Supporting the spiritual care, organisation and faithful service of the church.','workers-ministers']
-];
-
 const schedules = [
   ['Sunday Celebration Service','Every Sunday','8:00 AM','Our principal weekly gathering for worship, biblical teaching, prayer and fellowship.'],
   ['Digging Deep — Bible Study','Every Tuesday','6:00 PM – 7:00 PM','A focused time to explore Scripture, deepen biblical understanding and grow in faith.'],
   ['Faith Clinic — Prayer Meeting','Every Thursday','6:00 PM – 7:00 PM','A dedicated gathering for corporate prayer, intercession and spiritual encouragement.'],
   ['Monthly Night Vigil','Every third Friday','From 10:00 PM','A monthly night of prayer and seeking God. The official programme name and closing time will be added when confirmed.'],
-  ['First-Day Monthly Programme','First day of each month','6:30 AM – 7:30 PM · Pending confirmation','The time range supplied by the church is displayed as pending final confirmation by the Area Church.']
+  ['First-Day Monthly Programme','First day of each month','Time pending confirmation','Please contact the church office for the confirmed programme time before attending.']
 ];
 
 const icon = (name) => ({
@@ -65,6 +46,16 @@ const icon = (name) => ({
 }[name] || '');
 
 const escapeHTML = (value='') => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function parseApiResponse(res) {
+  try {
+    const raw=await res.text();
+    return raw?JSON.parse(raw):{};
+  } catch {
+    throw new Error(res.ok
+      ? 'The service returned an unexpected response. Please try again.'
+      : `The service could not complete the request (HTTP ${res.status}). Please try again later.`);
+  }
+}
 const link = (label, href, cls='text-link') => `<a class="${cls}" href="${href}" data-link>${label} ${icon('arrow')}</a>`;
 const button = (label, href, cls='btn btn-primary') => `<a class="${cls}" href="${href}" data-link>${label}<span>${icon('arrow')}</span></a>`;
 const sectionIntro = (eyebrow, title, text, centered=false) => `<div class="section-intro ${centered?'center':''}"><span class="eyebrow">${eyebrow}</span><h2>${title}</h2><p>${text}</p></div>`;
@@ -87,6 +78,7 @@ const formShell = (type, title, intro, fields='') => `
 
 function header() {
   return `
+  <a class="skip-link" href="#mainContent">Skip to main content</a>
   <div class="announcement"><div class="container announcement-inner"><span>THE REDEEMED CHRISTIAN CHURCH OF GOD</span><span>AREA CHURCH</span></div></div>
   <header class="site-header" id="siteHeader"><div class="container header-inner">
     <a class="brand" href="/" data-link aria-label="Balm of Galid home"><span class="brand-mark brand-logo"><img src="https://upload.wikimedia.org/wikipedia/commons/9/9b/Rccg_logo.png" alt="Redeemed Christian Church of God official emblem" loading="eager" decoding="async" /></span><span class="brand-copy"><strong>BALM OF GALID</strong><small>RCCG AREA CHURCH</small></span></a>
@@ -192,16 +184,15 @@ function homePage() {
   <section class="home-ministries section-pad">
     <div class="container">
       <div class="home-section-heading">
-        <div>${sectionIntro('FIND YOUR PLACE','There is a place for you here.','Faith is strengthened when we grow together. Discover a community where every generation can connect, serve and flourish.')}</div>
-        ${link('Explore all ministries','/ministries')}
+        <div>${sectionIntro('WORSHIP, GROW & CONNECT','Make room for worship, Scripture and prayer.','Here are the regular gatherings confirmed by the church. Local ministry and department details will be added after leadership approval.')}</div>
+        ${link('View the full schedule','/services')}
       </div>
-      <div class="home-ministry-grid">
-        <a class="home-ministry-card ministry-youth" href="/ministries/youth" data-link><img src="https://images.unsplash.com/photo-1529390079861-591de354faf5?auto=format&fit=crop&w=900&q=85" alt="Young people gathered together" loading="lazy"><span class="ministry-card-shade"></span><span class="ministry-card-number">01 / GENERATIONS</span><span class="ministry-card-copy"><small>GROWING TOGETHER</small><strong>Youth & Teens</strong><i>Discover the ministry <b>↗</b></i></span></a>
-        <a class="home-ministry-card ministry-women" href="/ministries/women" data-link><img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=900&q=85" alt="Women and friends sharing community" loading="lazy"><span class="ministry-card-shade"></span><span class="ministry-card-number">02 / FELLOWSHIP</span><span class="ministry-card-copy"><small>FAITH & FRIENDSHIP</small><strong>Women’s Fellowship</strong><i>Discover the ministry <b>↗</b></i></span></a>
-        <a class="home-ministry-card ministry-worship" href="/ministries/choir" data-link><img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=85" alt="A vocalist performing on stage" loading="lazy"><span class="ministry-card-shade"></span><span class="ministry-card-number">03 / WORSHIP</span><span class="ministry-card-copy"><small>WORSHIP WITH PURPOSE</small><strong>Choir & Music</strong><i>Discover the ministry <b>↗</b></i></span></a>
-        <a class="home-ministry-card ministry-care" href="/ministries/house-fellowship" data-link><img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=900&q=85" alt="Friends gathered in fellowship" loading="lazy"><span class="ministry-card-shade"></span><span class="ministry-card-number">04 / COMMUNITY</span><span class="ministry-card-copy"><small>LIFE IN COMMUNITY</small><strong>House Fellowship</strong><i>Discover the ministry <b>↗</b></i></span></a>
+      <div class="service-connection-grid">
+        <a class="service-connection-card" href="/services" data-link><span class="service-connection-index">01 / SUNDAY</span><h3>Sunday Celebration Service</h3><p>Every Sunday · 8:00 AM</p><span>Worship with us <b>↗</b></span></a>
+        <a class="service-connection-card" href="/services" data-link><span class="service-connection-index">02 / TUESDAY</span><h3>Digging Deep</h3><p>Bible Study · 6:00–7:00 PM</p><span>Grow in the Word <b>↗</b></span></a>
+        <a class="service-connection-card" href="/services" data-link><span class="service-connection-index">03 / THURSDAY</span><h3>Faith Clinic</h3><p>Prayer Meeting · 6:00–7:00 PM</p><span>Join us in prayer <b>↗</b></span></a>
       </div>
-      <p class="home-image-disclaimer">Photography is illustrative and will be replaced with approved Balm of Galid ministry photographs.</p>
+      <p class="home-image-disclaimer">The local ministry directory is being verified. Confirmed ministries and department leaders will be published after approval by church leadership.</p>
     </div>
   </section>
 
@@ -269,14 +260,12 @@ function leadershipPage() {
 }
 
 function ministriesPage() {
-  return `${pageHero('MINISTRIES & DEPARTMENTS','Find your place to grow and serve.','Explore the ministry areas the church may use to support worship, discipleship, fellowship and community life.')}
-  <section class="section-pad"><div class="container"><div class="notice-card"><strong>Ministry directory</strong><p>Only ministry records approved and published by authorised Balm of Galid administrators appear in this directory. Additional departments can be added after confirmation by church leadership.</p></div><div class="ministry-grid" id="ministryGrid">${departments.map(([title,desc,slug],i)=>`<a class="ministry-card" href="/ministries/${slug}" data-link><span class="ministry-number">MINISTRY 0${i+1}</span><span class="ministry-symbol">${icon(i%3===0?'users':i%3===1?'heart':'book')}</span><h3>${title}</h3><p>${desc}</p><span class="text-link">View details ${icon('arrow')}</span></a>`).join('')}</div></div></section>`;
-}
-
-function ministryDetail(slug) {
-  const entry=departments.find(d=>d[2]===slug);
-  if(!entry) return notFoundPage();
-  return `${pageHero('MINISTRY DIRECTORY',escapeHTML(entry[0]),escapeHTML(entry[1]))}<section class="section-pad"><div class="container narrow-copy"><span class="eyebrow">ABOUT THIS MINISTRY</span><h2>${escapeHTML(entry[0])}</h2><p class="lead">${escapeHTML(entry[1])}</p><div class="notice-card"><strong>Local ministry details pending confirmation</strong><p>The ministry’s active status, local vision, leadership, activities, meeting schedule, photographs and joining arrangements must be supplied and approved by Balm of Galid. This page is a structured placeholder until then.</p></div>${button('Return to ministries','/ministries','btn btn-dark')}</div></section>`;
+  return `${pageHero('MINISTRIES & DEPARTMENTS','Find your place to grow and serve.','Discover the ministry areas and departments serving the Balm of Galid church family.')}
+  <section class="section-pad"><div class="container">
+    <div class="notice-card"><strong>Local ministry directory under review</strong><p>We are confirming which ministries and departments are currently active at Balm of Galid. Only verified ministry names, leaders, meeting details and joining information will appear here after approval by church leadership.</p></div>
+    <div id="ministryGrid" class="content-grid three-col">${placeholder('The ministry directory is being prepared','Approved ministry profiles will appear here as soon as the church confirms their details.')}</div>
+    <div class="notice-card subtle"><strong>Connect with the church while the directory is prepared</strong><p>You are welcome to join a regular service, request prayer or plan a visit.</p><div class="ministry-next-links">${button('View worship services','/services','btn btn-dark')} ${button('Plan your visit','/visit','btn btn-outline-dark')} ${button('Request prayer','/prayer','btn btn-outline-dark')}</div></div>
+  </div></section>`;
 }
 
 function servicesPage() {
@@ -337,7 +326,7 @@ function givePage() {
 
 function visitPage() {
   return `${pageHero('PLAN YOUR VISIT','We look forward to welcoming you.','Whether you are exploring faith, returning to church or looking for a church family, you are welcome at Balm of Galid.')}
-  <section class="section-pad"><div class="container visit-grid"><div class="visit-copy"><span class="eyebrow">YOUR FIRST VISIT</span><h2>Come as you are.<br>There is room for you.</h2><p class="lead">We want your first experience to feel welcoming and easy. Our team will be glad to help you find your way and answer your questions.</p><div class="visit-facts"><article><span>01</span><div><strong>Service times</strong><p>Sunday Celebration: 8:00 AM. Tuesday Digging Deep: 6:00–7:00 PM. Thursday Faith Clinic: 6:00–7:00 PM. Monthly Night Vigil: every third Friday from 10:00 PM. First-Day Monthly Programme: 6:30 AM–7:30 PM, pending confirmation.</p></div></article><article><span>02</span><div><strong>Location & directions</strong><p>19, First Avenue, Oshodi Oke, Jigaye Community, Ogijo, Ogun State, Nigeria.</p></div></article><article><span>03</span><div><strong>What should I wear?</strong><p>Come in comfortable, respectful clothing. You do not need special attire to visit.</p></div></article><article><span>04</span><div><strong>Children & accessibility</strong><p>Please contact the church office to confirm available facilities and support.</p></div></article></div></div><div class="visit-form-panel">${formShell('visitor','Let us know you are coming','Share a few details so the welcome team can help make your visit easier.')}</div></div></section><section class="section-pad soft-bg"><div class="container split-content"><div><span class="eyebrow">FIND US</span><h2>Our doors are open.</h2><p>19, First Avenue, Oshodi Oke, Jigaye Community, Ogijo, Ogun State, Nigeria.</p></div><div class="map-placeholder"><span>${icon('pin')}</span><strong>Find Balm of Galid</strong><small>19, First Avenue, Oshodi Oke, Jigaye Community, Ogijo, Ogun State, Nigeria</small><a class="map-directions-link" href="https://www.google.com/maps/search/?api=1&query=19%2C%20First%20Avenue%2C%20Oshodi%20Oke%2C%20Jigaye%20Community%2C%20Ogijo%2C%20Ogun%20State%2C%20Nigeria" target="_blank" rel="noopener noreferrer">Open directions in Google Maps ↗</a></div></div></section>`;
+  <section class="section-pad"><div class="container visit-grid"><div class="visit-copy"><span class="eyebrow">YOUR FIRST VISIT</span><h2>Come as you are.<br>There is room for you.</h2><p class="lead">We want your first experience to feel welcoming and easy. Our team will be glad to help you find your way and answer your questions.</p><div class="visit-facts"><article><span>01</span><div><strong>Service times</strong><p>Sunday Celebration: 8:00 AM. Tuesday Digging Deep: 6:00–7:00 PM. Thursday Faith Clinic: 6:00–7:00 PM. Monthly Night Vigil: every third Friday from 10:00 PM. First-Day Monthly Programme: time pending final confirmation. Please contact the church office before attending.</p></div></article><article><span>02</span><div><strong>Location & directions</strong><p>19, First Avenue, Oshodi Oke, Jigaye Community, Ogijo, Ogun State, Nigeria.</p></div></article><article><span>03</span><div><strong>What should I wear?</strong><p>Come in comfortable, respectful clothing. You do not need special attire to visit.</p></div></article><article><span>04</span><div><strong>Children & accessibility</strong><p>Please contact the church office to confirm available facilities and support.</p></div></article></div></div><div class="visit-form-panel">${formShell('visitor','Let us know you are coming','Share a few details so the welcome team can help make your visit easier.')}</div></div></section><section class="section-pad soft-bg"><div class="container split-content"><div><span class="eyebrow">FIND US</span><h2>Our doors are open.</h2><p>19, First Avenue, Oshodi Oke, Jigaye Community, Ogijo, Ogun State, Nigeria.</p></div><div class="map-placeholder"><span>${icon('pin')}</span><strong>Find Balm of Galid</strong><small>19, First Avenue, Oshodi Oke, Jigaye Community, Ogijo, Ogun State, Nigeria</small><a class="map-directions-link" href="https://www.google.com/maps/search/?api=1&query=19%2C%20First%20Avenue%2C%20Oshodi%20Oke%2C%20Jigaye%20Community%2C%20Ogijo%2C%20Ogun%20State%2C%20Nigeria" target="_blank" rel="noopener noreferrer">Open directions in Google Maps ↗</a></div></div></section>`;
 }
 
 function houseFellowshipPage() {
@@ -421,7 +410,14 @@ const pageDescriptions = {
 };
 
 function applyPageMetadata(path) {
-  const title=pageTitles[path] || (path.startsWith('/ministries/')?'Ministry | Balm of Galid':'Balm of Galid | RCCG Area Church');
+  const title=pageTitles[path] || (
+    path.startsWith('/ministries/')?'Ministry profile | Balm of Galid':
+    path.startsWith('/leadership/')?'Leadership profile | Balm of Galid':
+    path.startsWith('/events/')?'Event details | Balm of Galid':
+    path.startsWith('/sermons/')?'Sermon | Balm of Galid':
+    path.startsWith('/news/')?'Church update | Balm of Galid':
+    'Balm of Galid | RCCG Area Church'
+  );
   const description=pageDescriptions[path] || 'Discover Balm of Galid RCCG Area Church in Ogijo, Ogun State, Nigeria.';
   document.title=title;
   const setMeta=(selector,attribute,value)=>{
@@ -439,10 +435,13 @@ function applyPageMetadata(path) {
   setMeta('meta[name="twitter:card"]','content','summary_large_image');
   setMeta('meta[name="twitter:title"]','content',title);
   setMeta('meta[name="twitter:description"]','content',description);
+  setMeta('meta[name="robots"]','content',path==='/admin'?'noindex,nofollow':'index,follow');
 }
 
 function render() {
- const path=decodeURIComponent(location.pathname.replace(/\/$/,'')||'/');
+ let path='/';
+ try { path=decodeURIComponent(location.pathname.replace(/\/+$/,'')||'/'); }
+ catch { path='/__invalid_route__'; }
  let content='';
  if(path==='/') content=homePage();
  else if(path==='/about') content=aboutPage();
@@ -508,12 +507,12 @@ async function submitForm(event) {
  const form=event.currentTarget, btn=form.querySelector('button[type="submit"]'), feedback=form.querySelector('.form-feedback');
  const data=Object.fromEntries(new FormData(form).entries());
  if(!data.consent){feedback.textContent='Please confirm the privacy notice before submitting.';return;}
- delete data.consent;
+ 
  const type=form.dataset.type;
  btn.disabled=true;btn.textContent='Sending securely…';feedback.className='form-feedback';feedback.textContent='';
  try {
    const res=await fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type,...data})});
-   const json=await res.json();
+   const json=await parseApiResponse(res);
    if(!res.ok) throw new Error(json.error||'Your message could not be sent at this time.');
    form.reset();feedback.className='form-feedback success';feedback.textContent='Thank you. Your message has been received securely.';
  } catch(err) {
@@ -683,15 +682,9 @@ async function loadSingleContent(type, slug, targetId, kind) {
   bindDynamicLinks(target);
   target.querySelectorAll('[data-submit-form]').forEach(form=>form.addEventListener('submit',submitForm));
  }catch(_){
-  if(kind==='ministry') {
-   const entry=departments.find(value=>value[2]===slug);
-   target.innerHTML=entry
-    ?`<article class="published-detail"><span class="eyebrow">MINISTRY DIRECTORY</span><h1>${escapeHTML(entry[0])}</h1><p class="published-detail-summary">${escapeHTML(entry[1])}</p><div class="notice-card"><strong>Local ministry details pending confirmation</strong><p>The active status, local leadership, activities, meeting schedule, photographs and joining arrangements must be supplied and approved by Balm of Galid.</p></div><div class="detail-back-link"><a href="/ministries" data-link>← Back to ministries</a></div></article>`
-    :placeholder('This ministry page is unavailable','It may have been unpublished or the link may have changed.');
-  } else {
-   const back=kind==='leader'?'/leadership':kind==='event'?'/events':kind==='sermon'?'/sermons':'/news';
-   target.innerHTML=placeholder('This item is unavailable','It may have been unpublished or the link may have changed.')+`<div class="detail-back-link"><a href="${back}" data-link>← Back</a></div>`;
-  }
+  const back=kind==='ministry'?'/ministries':kind==='leader'?'/leadership':kind==='event'?'/events':kind==='sermon'?'/sermons':'/news';
+  const label=kind==='ministry'?'This ministry profile is not available yet':'This item is unavailable';
+  target.innerHTML=placeholder(label,'This item may not have been published yet, or it may have been removed by an administrator.')+`<div class="detail-back-link"><a href="${back}" data-link>← Back</a></div>`;
   bindDynamicLinks(target);
  }
 }
@@ -740,7 +733,7 @@ function bindAdmin() {
   const values=Object.fromEntries(new FormData(form).entries());
   try{
    const res=await fetch('/api/admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'sign_in',...values})});
-   const data=await res.json();if(!res.ok)throw new Error(data.error||'Sign in failed.');
+   const data=await parseApiResponse(res);if(!res.ok)throw new Error(data.error||'Sign in failed.');
    sessionStorage.setItem('balmAdminToken',data.access_token);
    const dashboard=await adminRequest({action:'dashboard'});
    showAdminDashboard(mount,dashboard);
@@ -753,7 +746,7 @@ function bindAdmin() {
 async function adminRequest(body) {
  const token=sessionStorage.getItem('balmAdminToken');
  const res=await fetch('/api/admin',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(body)});
- const data=await res.json();if(!res.ok)throw new Error(data.error||'Unable to complete the request.');return data;
+ const data=await parseApiResponse(res);if(!res.ok)throw new Error(data.error||'Unable to complete the request.');return data;
 }
 function showAdminDashboard(mount,data) {
  const role=String(data.role||'');
@@ -765,7 +758,7 @@ function showAdminDashboard(mount,data) {
   <div class="admin-stat-grid">
    ${[['Content items',data.counts?.content??0],['New submissions',canViewPrivate?(data.counts?.new_submissions??0):'Restricted'],['Upcoming events',data.counts?.events??0],['Published sermons',data.counts?.sermons??0]].map(([l,v])=>`<div><span>${l}</span><strong>${v}</strong></div>`).join('')}
   </div>
-  ${canManage?'<section class="admin-module"><div class="admin-module-heading"><div><span class="eyebrow">CONTENT WORKSPACE</span><h3>Manage website content</h3><p>Create, update, publish and remove approved website records.</p></div></div><div id="adminContentManager"></div></section>':'<section class="admin-module"><h3>Website content</h3><p>Your account does not have permission to manage public website content.</p></section>'}
+  ${canManage?'<section class="admin-module"><div class="admin-module-heading"><div><span class="eyebrow">CONTENT WORKSPACE</span><h3>Manage website content</h3><p>Prepare and manage content records. Only the Area Pastor or super administrator can approve publication.</p></div></div><div id="adminContentManager"></div></section>':'<section class="admin-module"><h3>Website content</h3><p>Your account does not have permission to manage public website content.</p></section>'}
   ${canApprove?'<section class="admin-module"><div class="admin-module-heading"><div><span class="eyebrow">PASTORAL PUBLICATION REVIEW</span><h3>Review draft publications</h3><p>Approve drafts before they appear on public pages. Approval does not change the content itself.</p></div></div><div id="adminApprovalWorkspace"></div></section>':''}
   ${canViewPrivate?'<section class="admin-module"><div class="admin-module-heading"><div><span class="eyebrow">CONFIDENTIAL PASTORAL WORKSPACE</span><h3>Private submissions</h3><p>Prayer and counselling records are restricted to authorised pastoral personnel.</p></div></div><div id="adminPrivateSubmissions"></div></section>':'<section class="admin-module"><h3>Private pastoral records</h3><p>Restricted. Your assigned role does not provide access to prayer requests or counselling submissions.</p></section>'}
   <p class="admin-footnote">Access is checked by the server for every administrative action. Changes are recorded in the audit log.</p>
@@ -854,9 +847,10 @@ function bindAdminContentManager(mount,role) {
    const raw=field('data').value.trim();
    const data=raw?JSON.parse(raw):{};
    if(!data||Array.isArray(data)||typeof data!=='object')throw new Error('Additional information must be a JSON object.');
-   await adminRequest({action:'save_content',id:field('id').value||undefined,content_type:typeSelect.value,title:field('title').value,slug:field('slug').value,summary:field('summary').value,body:field('body').value,starts_at:field('starts_at').value?new Date(field('starts_at').value).toISOString():null,data,published:field('published').checked});
+   const saveResult=await adminRequest({action:'save_content',id:field('id').value||undefined,content_type:typeSelect.value,title:field('title').value,slug:field('slug').value,summary:field('summary').value,body:field('body').value,starts_at:field('starts_at').value?new Date(field('starts_at').value).toISOString():null,data,published:field('published').checked});
+   const saveMessage=saveResult.awaiting_approval?'Saved as a draft. It will appear publicly only after pastoral approval.':'Content saved successfully.';
    resetForm();await loadItems();
-   list.insertAdjacentHTML('afterbegin','<p class="form-feedback success">Content saved successfully.</p>');
+   const notice=document.createElement('p');notice.className='form-feedback success';notice.textContent=saveMessage;list.prepend(notice);
   }catch(err){feedback.className='form-feedback error';feedback.textContent=err instanceof SyntaxError?'Please enter valid JSON in the additional information field.':err.message;}
   finally{btn.disabled=false;}
  });

@@ -1,4 +1,4 @@
-module.exports = async function handler(req,res) {
+export default async function handler(req,res) {
   res.setHeader('Cache-Control','public, s-maxage=60, stale-while-revalidate=300');
   if(req.method!=='GET') return res.status(405).json({error:'Method not allowed.'});
   const {SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY}=process.env;
