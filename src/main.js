@@ -146,15 +146,15 @@ function homePage() {
 
   <section class="pastor-welcome-section">
     <div class="container pastor-welcome-grid">
-      <div class="pastor-portrait-placeholder" role="img" aria-label="Approved portrait of Pastor Ajetunmobi Adegbola to be added">
-        <span>OFFICIAL PASTORAL PORTRAIT</span><strong>PA</strong><small>Photograph awaiting church approval</small>
+      <div class="pastor-portrait-frame">
+        <img src="https://raw.githubusercontent.com/Success04212007/balm-rccg-official/main/WhatsApp%20Image%202026-11-24%20at%202.28.22%20AM.jpeg" alt="Pastor Ajetunmobi Adegbola, Area Pastor of Balm of Galid" loading="lazy">
       </div>
       <div class="pastor-welcome-copy">
         <span class="eyebrow">A WELCOME FROM OUR AREA PASTOR</span>
         <h2>Pastor Ajetunmobi Adegbola</h2>
         <p class="pastor-designation">Area Pastor · Balm of Galid Area</p>
         <p>We are delighted to welcome you to Balm of Galid. Our church is committed to preaching the Gospel of Jesus Christ, nurturing believers in faith, strengthening families and sharing God’s love with our community.</p>
-        <p class="pastor-message-note">The Area Pastor’s personal welcome message and approved portrait will be published here following pastoral review.</p>
+        <p class="pastor-message-note">The Area Pastor’s personal welcome message will be published here following pastoral review.</p>
         ${link('Meet our leadership','/leadership')}
       </div>
     </div>
@@ -256,7 +256,7 @@ function aboutPage() {
 
 function leadershipPage() {
   return `${pageHero('OUR LEADERSHIP','Servant-hearted leadership.','Meet the pastors, ministers and leaders who serve the Balm of Galid church family.')}
-  <section class="section-pad"><div class="container"><div class="section-intro center"><span class="eyebrow">AREA CHURCH LEADERSHIP</span><h2>Leadership is a calling to serve.</h2><p>We honour the people entrusted with spiritual care, guidance and service. Profiles will be published only after names, titles, photographs and biographies are approved.</p></div><div class="leader-feature"><div class="leader-photo-placeholder"><span>APPROVED PASTORAL<br>PORTRAIT<br>TO BE ADDED</span></div><div class="leader-info"><span class="eyebrow">AREA PASTOR</span><h2>Pastor Ajetunmobi Adegbola</h2><p class="lead">Area Pastor · Balm of Galid Area</p><p class="muted">The name and official designation have been supplied by the church. A verified biography, ministry background, personal welcome message and approved portrait will be added after pastoral review.</p><span class="status-pill">BIOGRAPHY & PORTRAIT AWAITING APPROVAL</span></div></div><div class="section-heading-row leader-team-head"><div><span class="eyebrow">CHURCH LEADERSHIP TEAM</span><h2>Serving together.</h2></div><p>Verified ministers, department leaders and administrative team members will be added by authorised administrators.</p></div><div id="leadershipList" class="content-grid three-col">${placeholder('Leadership directory is being prepared','No names, titles or biographies have been invented. Approved profiles will appear here.')}</div></div></section>`;
+  <section class="section-pad"><div class="container"><div class="section-intro center"><span class="eyebrow">AREA CHURCH LEADERSHIP</span><h2>Leadership is a calling to serve.</h2><p>We honour the people entrusted with spiritual care, guidance and service. Profiles will be published only after names, titles, photographs and biographies are approved.</p></div><div class="leader-feature"><div class="leader-photo-frame"><img src="https://raw.githubusercontent.com/Success04212007/balm-rccg-official/main/WhatsApp%20Image%202026-11-24%20at%202.28.22%20AM.jpeg" alt="Pastor Ajetunmobi Adegbola, Area Pastor of Balm of Galid" loading="lazy"></div><div class="leader-info"><span class="eyebrow">AREA PASTOR</span><h2>Pastor Ajetunmobi Adegbola</h2><p class="lead">Area Pastor · Balm of Galid Area</p><p class="muted">The name and official designation have been supplied by the church. A verified biography, ministry background and personal welcome message will be added after pastoral review.</p><span class="status-pill">BIOGRAPHY & PORTRAIT AWAITING APPROVAL</span></div></div><div class="section-heading-row leader-team-head"><div><span class="eyebrow">CHURCH LEADERSHIP TEAM</span><h2>Serving together.</h2></div><p>Verified ministers, department leaders and administrative team members will be added by authorised administrators.</p></div><div id="leadershipList" class="content-grid three-col">${placeholder('Leadership directory is being prepared','No names, titles or biographies have been invented. Approved profiles will appear here.')}</div></div></section>`;
 }
 
 function ministriesPage() {
